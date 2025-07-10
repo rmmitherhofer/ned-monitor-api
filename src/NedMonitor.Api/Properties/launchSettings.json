@@ -1,0 +1,35 @@
+﻿{
+  "profiles": {
+    "Container Develop": {
+      "commandName": "Project",
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:9115;http://localhost:5019"
+    },
+    "Container Production": {
+      "commandName": "Project",
+      "launchUrl": "swagger",
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:9115;http://localhost:5019"
+    },
+    "IIS Develop": {
+      "commandName": "IISExpress",
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  },
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:52477",
+      "sslPort": 43023
+    }
+  }
+}

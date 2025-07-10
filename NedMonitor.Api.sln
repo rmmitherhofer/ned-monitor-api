@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NedMonitor.Api", "src\NedMonitor.Api\NedMonitor.Api.csproj", "{69D0885A-ECAC-4264-AE7B-CC3A79B5F1C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NedMonitor.Application", "src\NedMonitor.Application\NedMonitor.Application.csproj", "{B749E915-6F1B-479B-BB48-86DAC2E87C11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NedMonitor.Domain", "src\NedMonitor.Domain\NedMonitor.Domain.csproj", "{B746B88A-F997-4559-BDAF-138E8F1E2812}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NedMonitor.Infra.Data", "src\NedMonitor.Infra.Data\NedMonitor.Infra.Data.csproj", "{CC8D9DD8-5EB8-4BD4-8CD8-13833C333E56}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9783293D-38BB-4040-8F1A-AF20EEAB47C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{69D0885A-ECAC-4264-AE7B-CC3A79B5F1C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69D0885A-ECAC-4264-AE7B-CC3A79B5F1C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69D0885A-ECAC-4264-AE7B-CC3A79B5F1C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69D0885A-ECAC-4264-AE7B-CC3A79B5F1C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B749E915-6F1B-479B-BB48-86DAC2E87C11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B749E915-6F1B-479B-BB48-86DAC2E87C11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B749E915-6F1B-479B-BB48-86DAC2E87C11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B749E915-6F1B-479B-BB48-86DAC2E87C11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B746B88A-F997-4559-BDAF-138E8F1E2812}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B746B88A-F997-4559-BDAF-138E8F1E2812}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B746B88A-F997-4559-BDAF-138E8F1E2812}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B746B88A-F997-4559-BDAF-138E8F1E2812}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC8D9DD8-5EB8-4BD4-8CD8-13833C333E56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC8D9DD8-5EB8-4BD4-8CD8-13833C333E56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC8D9DD8-5EB8-4BD4-8CD8-13833C333E56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC8D9DD8-5EB8-4BD4-8CD8-13833C333E56}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{69D0885A-ECAC-4264-AE7B-CC3A79B5F1C2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B749E915-6F1B-479B-BB48-86DAC2E87C11} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{B746B88A-F997-4559-BDAF-138E8F1E2812} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{CC8D9DD8-5EB8-4BD4-8CD8-13833C333E56} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {62EF6B21-EEFF-4639-ABF1-12261E6A5141}
+	EndGlobalSection
+EndGlobal
