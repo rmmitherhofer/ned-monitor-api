@@ -1,12 +1,12 @@
-﻿using Api.Core.Data;
-using Api.Data.Extensions;
-using Common.Logs.Extensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NedMonitor.Domain.Entities;
 using NedMonitor.Domain.Filters;
 using NedMonitor.Domain.Interfaces;
 using NedMonitor.Infra.Data.Extensions;
+using Zypher.Logs.Extensions;
+using Zypher.Persistence.Abstractions.Data;
+using Zypher.Api.Data.Extensions;
 
 namespace NedMonitor.Infra.Data.Repositories;
 

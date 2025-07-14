@@ -1,6 +1,4 @@
-﻿using Common.Core.DomainObjects;
-using Common.Exceptions;
-using System.Data;
+﻿using System.Data;
 using UAParser;
 
 namespace NedMonitor.Domain.Entities;
@@ -13,9 +11,10 @@ public class UserPlatform
     public string OSName { get; private set; }
     public string OSVersion { get; private set; }
     public string DeviceType { get; private set; }
-
-    private UserPlatform(string userAgent)
+    private UserPlatform() { }
+    public UserPlatform(string userAgent)
     {
+        if (string.IsNullOrEmpty(userAgent)) return;
 
         UserAgent = userAgent;
 
@@ -39,23 +38,6 @@ public class UserPlatform
 
         return string.Join(".", parts);
     }
-
-    public static UserPlatformInfoBuilder Create(string userAgent) => new(userAgent);
-
-    public class UserPlatformInfoBuilder
-    {
-        private readonly UserPlatform _userPlatform;
-
-        public UserPlatformInfoBuilder(string userAgent)
-        {
-            if (string.IsNullOrWhiteSpace(userAgent))
-                throw new DomainException("UserAgent cannot be null or empty.");
-
-            _userPlatform = new UserPlatform(userAgent);
-        }
-        public UserPlatform Build() => _userPlatform;
-    }
-
     public override string ToString()
     {
         return $"{BrowserName} {BrowserVersion} on {OSName} {OSVersion} ({DeviceType})";

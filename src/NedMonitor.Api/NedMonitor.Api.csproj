@@ -21,11 +21,20 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-		<PackageReference Include="MitherPack.Api.Service.Framework" Version="9.0.8" />
+		<PackageReference Include="Zypher.Api.Foundation" Version="1.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\NedMonitor.Application\NedMonitor.Application.csproj" />
 	</ItemGroup>
+
+
+	<Target Name="CopyExternalXmlDoc" AfterTargets="Build">
+		<ItemGroup>
+			<ExternalDocFiles Include="$(NuGetPackageRoot)zypher.requests\1.0.0\lib\net9.0\Zypher.Requests.xml" />
+			<ExternalDocFiles Include="$(NuGetPackageRoot)zypher.responses\1.0.0\lib\net9.0\Zypher.Responses.xml" />
+		</ItemGroup>
+		<Copy SourceFiles="@(ExternalDocFiles)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" />
+	</Target>
 
 </Project>

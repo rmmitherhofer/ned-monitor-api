@@ -1,5 +1,4 @@
-﻿using Common.Core.DomainObjects;
-using System.Net;
+﻿using System.Net;
 
 namespace NedMonitor.Domain.Entities;
 

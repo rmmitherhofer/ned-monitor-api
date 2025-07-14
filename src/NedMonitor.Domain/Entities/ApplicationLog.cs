@@ -1,23 +1,21 @@
-﻿
-using Common.Core.DomainObjects;
-using Common.Exceptions;
-using NedMonitor.Domain.Enums;
+﻿using NedMonitor.Domain.Enums;
+using Zypher.Domain.Core.DomainObjects;
+using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
-
-
 public class ApplicationLog : Entity, IAggregateRoot
 {
+    public DateTime StartTimeUtc { get; set; }
+    public DateTime EndTimeUtc { get; set; }
     public LogAttentionLevel LogAttentionLevel { get; private set; }
     public string CorrelationId { get; private set; }
     public string EndpointPath { get; private set; }
-    public long ElapsedMilliseconds { get; private set; }
+    public double TotalMilliseconds { get; private set; }
     public string? TraceIdentifier { get; private set; }
     public string? ErrorCategory { get; private set; }
     public Project Project { get; private set; }
     public Environment Environment { get; private set; }
     public User User { get; private set; }
-    public UserPlatform UserPlatform { get; private set; }
     public Request Request { get; private set; }
     public Response Response { get; private set; }
     public Diagnostic Diagnostic { get; private set; }
@@ -25,36 +23,40 @@ public class ApplicationLog : Entity, IAggregateRoot
     public IReadOnlyCollection<LogEntry> LogEntries { get; private set; }
     public IReadOnlyCollection<Exception> Exceptions { get; private set; }
     public IReadOnlyCollection<HttpClientLog> HttpClientLogs { get; private set; }
+    public IReadOnlyCollection<DbQueryEntry> DbQueryEntries { get; private set; }
     private ApplicationLog()
     {
         Notifications = [];
         LogEntries = [];
         Exceptions = [];
         HttpClientLogs = [];
+        DbQueryEntries = [];
     }
 
     public static ApplicationLogBuilder Create(
+        DateTime startTimeUtc,
+        DateTime endTimeUtc,
         LogAttentionLevel logAttentionLevel,
         string correlationId,
         string endpointPath,
-        long elapsedMilliseconds,
+        double totalMilliseconds,
         Project project,
         Environment environment,
         User user,
-        UserPlatform userPlatform,
         Request request,
         Response response,
         Diagnostic diagnostic)
     {
         return new(
+            startTimeUtc,
+            endTimeUtc,
             logAttentionLevel,
             correlationId,
             endpointPath,
-            elapsedMilliseconds,
+            totalMilliseconds,
             project,
             environment,
             user,
-            userPlatform,
             request,
             response,
             diagnostic);
@@ -67,16 +69,18 @@ public class ApplicationLog : Entity, IAggregateRoot
         private readonly List<LogEntry> _logEntries = [];
         private readonly List<Exception> _exceptions = [];
         private readonly List<HttpClientLog> _httpClientLogs = [];
+        private readonly List<DbQueryEntry> _dbQueryEntries = [];
 
         public ApplicationLogBuilder(
+            DateTime startTimeUtc,
+            DateTime endTimeUtc,
             LogAttentionLevel logAttentionLevel,
             string correlationId,
             string endpointPath,
-            long elapsedMilliseconds,
+            double totalMilliseconds,
             Project project,
             Environment environment,
             User user,
-            UserPlatform userPlatform,
             Request request,
             Response response,
             Diagnostic diagnostic)
@@ -96,14 +100,15 @@ public class ApplicationLog : Entity, IAggregateRoot
 
             _log = new ApplicationLog
             {
+                StartTimeUtc = startTimeUtc,
+                EndTimeUtc = endTimeUtc,
                 LogAttentionLevel = logAttentionLevel,
                 CorrelationId = correlationId,
                 EndpointPath = endpointPath,
-                ElapsedMilliseconds = elapsedMilliseconds,
+                TotalMilliseconds = totalMilliseconds,
                 Project = project,
                 Environment = environment,
                 User = user,
-                UserPlatform = userPlatform,
                 Request = request,
                 Response = response,
                 Diagnostic = diagnostic
@@ -164,7 +169,6 @@ public class ApplicationLog : Entity, IAggregateRoot
             return this;
         }
 
-
         public ApplicationLogBuilder AddHttpClientLog(HttpClientLog  httpClientLog)
         {
             httpClientLog.SetParent(_log);
@@ -179,6 +183,19 @@ public class ApplicationLog : Entity, IAggregateRoot
             return this;
         }
 
+        public ApplicationLogBuilder AddDbQueryEntry(DbQueryEntry dbQueryEntry)
+        {
+            dbQueryEntry.SetParent(_log);
+            _dbQueryEntries.Add(dbQueryEntry);
+            return this;
+        }
+
+        public ApplicationLogBuilder AddDbQueryEntries(IEnumerable<DbQueryEntry> dbQueryEntries)
+        {
+            foreach (var queryEntry in dbQueryEntries)
+                AddDbQueryEntry(queryEntry);
+            return this;
+        }
 
         public ApplicationLog Build()
         {
@@ -186,6 +203,7 @@ public class ApplicationLog : Entity, IAggregateRoot
             _log.LogEntries = _logEntries;
             _log.Exceptions = _exceptions;
             _log.HttpClientLogs = _httpClientLogs;
+            _log.DbQueryEntries = _dbQueryEntries;
             return _log;
         }
     }

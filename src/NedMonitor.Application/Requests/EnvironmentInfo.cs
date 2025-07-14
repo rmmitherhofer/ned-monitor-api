@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace NedMonitor.Application.Requests;
+﻿namespace NedMonitor.Application.Requests;
 
 /// <summary>
 /// Represents information about the current runtime environment,

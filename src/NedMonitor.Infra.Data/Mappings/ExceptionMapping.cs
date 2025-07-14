@@ -16,6 +16,12 @@ public class ExceptionMapping : IEntityTypeConfiguration<Domain.Entities.Excepti
 
         builder.Property(c => c.DateChanged);
 
+        builder.Property(c => c.TimestampUtc)
+            .IsRequired();
+
+        builder.Property(c => c.Source)
+            .HasMaxLength(250);
+
         builder.Property(x => x.Type)
             .IsRequired()
             .HasMaxLength(500);

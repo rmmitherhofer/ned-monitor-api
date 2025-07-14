@@ -1,5 +1,5 @@
-﻿using Api.Core.Data;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
+using Zypher.Persistence.Abstractions.Data;
 
 namespace NedMonitor.Application.Core;
 

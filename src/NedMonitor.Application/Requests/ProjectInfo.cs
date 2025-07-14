@@ -1,4 +1,5 @@
-﻿using NedMonitor.Domain.Enums;
+﻿using Microsoft.Extensions.Logging;
+using NedMonitor.Domain.Enums;
 
 namespace NedMonitor.Application.Requests;
 
@@ -9,70 +10,51 @@ namespace NedMonitor.Application.Requests;
 public class ProjectInfo
 {
     /// <summary>
-    /// Unique identifier of the project.
+    /// Unique identifier for the project.
     /// </summary>
     public Guid Id { get; set; }
 
     /// <summary>
-    /// Name of the project.
-    /// </summary>
-    public string Name { get; set; }
-
-    /// <summary>
-    /// Type of the project.
+    /// Type of the project (defined by the <see cref="Type"/> enum).
     /// </summary>
     public ProjectType Type { get; set; }
 
     /// <summary>
-    /// Maximum size of the response body to capture, in megabytes.
+    /// Name of the project, automatically obtained from the entry assembly.
     /// </summary>
-    public int MaxResponseBodySizeInMb { get; set; }
+    public string Name { get; set; }
 
     /// <summary>
-    /// Indicates whether to capture the response body for logging.
+    /// Defines the execution mode settings that control how NedMonitor behaves during runtime,
+    /// such as which features to enable (e.g., logging, notifications, exceptions).
     /// </summary>
-    public bool CaptureResponseBody { get; set; }
+    public ExecutionModeSettingsInfo ExecutionMode { get; set; }
 
     /// <summary>
-    /// Indicates whether the request and response payload should be written to the console output.
-    /// Useful for debugging during development.
+    /// Configuration settings related to HTTP request and response logging.
     /// </summary>
-    public bool WritePayloadToConsole { get; set; }
+    public HttpLoggingSettingsInfo? HttpLogging { get; set; }
 
     /// <summary>
-    /// Enables or disables the NedMonitor entirely.
+    /// Configuration options for masking sensitive data in logs, such as passwords or tokens.
     /// </summary>
-    public bool EnableNedMonitor { get; set; } = true;
+    public SensitiveDataMaskerSettingsInfo? SensitiveDataMasking { get; set; }
 
     /// <summary>
-    /// Enables capturing of unhandled exceptions.
+    /// Settings for capturing and handling exceptions during request processing.
     /// </summary>
-    public bool EnableMonitorExceptions { get; set; } = true;
+    public ExceptionsSettingsInfo? Exceptions { get; set; }
 
     /// <summary>
-    /// Enables capturing of domain or validation notifications.
+    /// Settings related to database interceptors for logging EF and Dapper queries.
     /// </summary>
-    public bool EnableMonitorNotifications { get; set; }
+    public DataInterceptorsSettingsInfo? DataInterceptors { get; set; }
 
     /// <summary>
-    /// Enables capturing of application logs (e.g., console logs).
+    /// Defines the minimum log level to be captured and stored during a request lifecycle.
+    /// Log entries below this level will be ignored.
     /// </summary>
-    public bool EnableMonitorLogs { get; set; }
-
-    /// <summary>
-    /// Enables logging of outgoing HttpClient requests.
-    /// </summary>
-    public bool EnableMonitorHttpRequests { get; set; }
-
-    /// <summary>
-    /// List of keywords used to identify and mask sensitive data (e.g., passwords, tokens, secrets) in logs.
-    /// </summary>
-    public List<string> SensitiveKeys { get; set; }
-    /// <summary>
-    /// A list of fully qualified exception type names that should be treated as expected exceptions
-    /// (i.e., not considered errors and may not trigger error logging).
-    /// </summary>
-    public List<string> ExpectedExceptions { get; set; }
+    public LogLevel MinimumLogLevel { get; set; }
 }
 
 

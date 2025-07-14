@@ -1,11 +1,9 @@
-﻿using System.Text.Json.Serialization;
-
-namespace NedMonitor.Application.Requests;
+﻿namespace NedMonitor.Application.Requests;
 
 /// <summary>
 /// Represents information about an external dependency call or operation.
 /// </summary>
-public class DependencyInfoRequest
+public class DependencyInfo
 {
     /// <summary>
     /// The type or category of the dependency.

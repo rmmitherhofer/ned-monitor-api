@@ -1,5 +1,5 @@
-﻿using Common.Core.DomainObjects;
-using Common.Exceptions;
+﻿using Zypher.Domain.Core.DomainObjects;
+using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
 
@@ -9,18 +9,22 @@ public class Exception : Entity
     public string Message { get; private set; }
     public string? Tracer { get; private set; }
     public string? InnerException { get; private set; }
+    public DateTime TimestampUtc { get; set; }
+    public string? Source { get; set; }
 
     public ApplicationLog ApplicationLog { get; protected set; }
     public Guid LogId { get; private set; }
+    public string CorrelationId { get; private set; }
 
     private Exception() { }
 
-    public static ExceptionInfoBuilder Create(string type, string message)
-        => new(type, message);
+    public static ExceptionInfoBuilder Create(string type, string message, DateTime timestampUtc)
+        => new(type, message, timestampUtc);
 
     internal void SetParent(ApplicationLog log)
     {
         LogId = log.Id;
+        CorrelationId = log.CorrelationId;
         ApplicationLog = log;
     }
 
@@ -28,7 +32,7 @@ public class Exception : Entity
     {
         private readonly Exception _exception;
 
-        public ExceptionInfoBuilder(string type, string message)
+        public ExceptionInfoBuilder(string type, string message, DateTime timestampUtc)
         {
             if (string.IsNullOrWhiteSpace(type))
                 throw new DomainException("Exception type is required.");
@@ -38,7 +42,8 @@ public class Exception : Entity
             _exception = new Exception
             {
                 Type = type,
-                Message = message
+                Message = message,
+                TimestampUtc = timestampUtc
             };
         }
 
@@ -51,6 +56,12 @@ public class Exception : Entity
         public ExceptionInfoBuilder WithInnerException(string? inner)
         {
             _exception.InnerException = inner;
+            return this;
+        }
+
+        public ExceptionInfoBuilder WithSource(string? source)
+        {
+            _exception.Source = source;
             return this;
         }
 

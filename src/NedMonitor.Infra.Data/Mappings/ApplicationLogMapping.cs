@@ -18,6 +18,12 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
 
         builder.Property(c => c.DateChanged);
 
+        builder.Property(c => c.StartTimeUtc)
+            .IsRequired();
+
+        builder.Property(c => c.EndTimeUtc)
+            .IsRequired();
+
         builder.Property(x => x.LogAttentionLevel)
             .HasConversion<int>()
             .IsRequired();
@@ -30,7 +36,7 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
             .IsRequired()
             .HasMaxLength(9000);
 
-        builder.Property(x => x.ElapsedMilliseconds)
+        builder.Property(x => x.TotalMilliseconds)
             .IsRequired();
 
         builder.Property(x => x.TraceIdentifier)
@@ -59,18 +65,82 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
                 .HasConversion<int>()
                 .IsRequired();
 
-            p.Property(p => p.ExecutionMode)
+            p.Property(p => p.MinimumLogLevel)
                 .HasConversion<int>()
                 .IsRequired();
 
-            p.Property(p => p.MaxResponseBodySizeInMb)
-                .IsRequired();
+            p.OwnsOne(x => x.ExecutionMode, em =>
+            {
+                em.Property(em => em.EnableNedMonitor)
+                    .IsRequired();
 
-            p.Property(p => p.CaptureResponseBody)
-                .IsRequired();
+                em.Property(em => em.EnableMonitorDbQueries)
+                    .IsRequired();
 
-            p.Property(p => p.WritePayloadToConsole)
-                .IsRequired();
+                em.Property(em => em.EnableMonitorLogs)
+                    .IsRequired();
+
+                em.Property(em => em.EnableMonitorExceptions)
+                    .IsRequired();
+
+                em.Property(em => em.EnableMonitorNotifications)
+                    .IsRequired();
+
+                em.Property(em => em.EnableMonitorHttpRequests)
+                    .IsRequired();
+            });
+
+            p.OwnsOne(x => x.HttpLogging, hl =>
+            {
+                hl.Property(hl => hl.CaptureResponseBody)
+                    .IsRequired();
+
+                hl.Property(hl => hl.WritePayloadToConsole)
+                    .IsRequired();
+
+                hl.Property(hl => hl.MaxResponseBodySizeInMb)
+                    .IsRequired();
+            });
+
+            p.OwnsOne(x => x.SensitiveDataMasking, sd =>
+            {
+                sd.Property(sd => sd.Enabled)
+                    .IsRequired();
+
+                sd.Property(sd => sd.SensitiveKeys)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                        v => JsonSerializer.Deserialize<List<string>>(v!, (JsonSerializerOptions?)null) ?? new())
+                    .HasColumnType("nvarchar(max)")
+                    .IsRequired();
+
+                sd.Property(sd => sd.MaskValue)
+                    .IsRequired();
+            });
+
+            p.OwnsOne(x => x.Exceptions, e =>
+            {
+                e.Property(e => e.Expected)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                        v => JsonSerializer.Deserialize<List<string>>(v!, (JsonSerializerOptions?)null))
+                    .HasColumnType("nvarchar(max)");
+            });
+
+            p.OwnsOne(x => x.DataInterceptors, di =>
+            {
+                di.Property(di => di.EF)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                        v => JsonSerializer.Deserialize<EfInterceptorSetting>(v!, (JsonSerializerOptions?)null))
+                    .HasColumnType("nvarchar(max)");
+
+                di.Property(di => di.Dapper)
+                    .HasConversion(
+                        v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
+                        v => JsonSerializer.Deserialize<DapperInterceptorSetting>(v!, (JsonSerializerOptions?)null))
+                    .HasColumnType("nvarchar(max)");
+            });
 
             p.HasIndex(p => p.Id);
             p.HasIndex(p => p.Name);
@@ -141,27 +211,6 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
             u.HasIndex(u => u.Document);
         });
 
-        builder.OwnsOne(x => x.UserPlatform, up =>
-        {
-            up.Property(up => up.UserAgent)
-                .HasMaxLength(500);
-
-            up.Property(up => up.BrowserName)
-                .HasMaxLength(100);
-
-            up.Property(up => up.BrowserVersion)
-                .HasMaxLength(50);
-
-            up.Property(up => up.OSName)
-                .HasMaxLength(150);
-
-            up.Property(up => up.OSVersion)
-                .HasMaxLength(50);
-
-            up.Property(up => up.DeviceType)
-                .HasMaxLength(50);
-        });
-
         builder.OwnsOne(x => x.Request, rq =>
         {
             rq.Property(rq => rq.Id)
@@ -197,9 +246,27 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
                     v => JsonSerializer.Deserialize<Dictionary<string, string>>(v!, (JsonSerializerOptions?)null) ?? new Dictionary<string, string>())
                 .HasColumnType("nvarchar(max)");
 
-            rq.Property(rq => rq.UserAgent)
-                .IsRequired()
-                .HasMaxLength(1500);
+
+            rq.OwnsOne(x => x.UserPlatform, up =>
+            {
+                up.Property(up => up.UserAgent)
+                    .HasMaxLength(500);
+
+                up.Property(up => up.BrowserName)
+                    .HasMaxLength(100);
+
+                up.Property(up => up.BrowserVersion)
+                    .HasMaxLength(50);
+
+                up.Property(up => up.OSName)
+                    .HasMaxLength(150);
+
+                up.Property(up => up.OSVersion)
+                    .HasMaxLength(50);
+
+                up.Property(up => up.DeviceType)
+                    .HasMaxLength(50);
+            });
 
             rq.Property(rq => rq.ClientId)
                 .IsRequired()
@@ -275,7 +342,7 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
             d.Property(d => d.Dependencies)
                 .HasConversion(
                     v => JsonSerializer.Serialize(v, (JsonSerializerOptions?)null),
-                    v => JsonSerializer.Deserialize<List<DependencyInfo>>(v!, (JsonSerializerOptions?)null) ?? new List<DependencyInfo>())
+                    v => JsonSerializer.Deserialize<List<Dependency>>(v!, (JsonSerializerOptions?)null) ?? new List<Dependency>())
                 .HasColumnType("nvarchar(max)");
         });
 
@@ -290,6 +357,11 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(c => c.Exceptions)
+            .WithOne(a => a.ApplicationLog)
+            .HasForeignKey(a => a.LogId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(c => c.DbQueryEntries)
             .WithOne(a => a.ApplicationLog)
             .HasForeignKey(a => a.LogId)
             .OnDelete(DeleteBehavior.Cascade);

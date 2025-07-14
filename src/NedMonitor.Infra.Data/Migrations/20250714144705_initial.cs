@@ -16,19 +16,33 @@ namespace NedMonitor.Infra.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StartTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LogAttentionLevel = table.Column<int>(type: "int", nullable: false),
                     CorrelationId = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: false),
                     EndpointPath = table.Column<string>(type: "varchar(150)", maxLength: 9000, nullable: false),
-                    ElapsedMilliseconds = table.Column<long>(type: "bigint", nullable: false),
+                    TotalMilliseconds = table.Column<double>(type: "float", nullable: false),
                     TraceIdentifier = table.Column<string>(type: "varchar(150)", maxLength: 200, nullable: true),
                     ErrorCategory = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: true),
                     Project_Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 200, nullable: false),
-                    Project_Name = table.Column<string>(type: "varchar(150)", maxLength: 200, nullable: false),
                     Project_Type = table.Column<int>(type: "int", nullable: false),
-                    Project_ExecutionMode = table.Column<int>(type: "int", nullable: false),
-                    Project_MaxResponseBodySizeInMb = table.Column<int>(type: "int", nullable: false),
-                    Project_CaptureResponseBody = table.Column<bool>(type: "bit", nullable: false),
-                    Project_WritePayloadToConsole = table.Column<bool>(type: "bit", nullable: false),
+                    Project_Name = table.Column<string>(type: "varchar(150)", maxLength: 200, nullable: false),
+                    Project_ExecutionMode_EnableNedMonitor = table.Column<bool>(type: "bit", nullable: false),
+                    Project_ExecutionMode_EnableMonitorExceptions = table.Column<bool>(type: "bit", nullable: false),
+                    Project_ExecutionMode_EnableMonitorNotifications = table.Column<bool>(type: "bit", nullable: false),
+                    Project_ExecutionMode_EnableMonitorLogs = table.Column<bool>(type: "bit", nullable: false),
+                    Project_ExecutionMode_EnableMonitorHttpRequests = table.Column<bool>(type: "bit", nullable: false),
+                    Project_ExecutionMode_EnableMonitorDbQueries = table.Column<bool>(type: "bit", nullable: false),
+                    Project_HttpLogging_WritePayloadToConsole = table.Column<bool>(type: "bit", nullable: true),
+                    Project_HttpLogging_CaptureResponseBody = table.Column<bool>(type: "bit", nullable: true),
+                    Project_HttpLogging_MaxResponseBodySizeInMb = table.Column<int>(type: "int", nullable: true),
+                    Project_SensitiveDataMasking_Enabled = table.Column<bool>(type: "bit", nullable: true),
+                    Project_SensitiveDataMasking_SensitiveKeys = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Project_SensitiveDataMasking_MaskValue = table.Column<string>(type: "varchar(150)", nullable: true),
+                    Project_Exceptions_Expected = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Project_DataInterceptors_EF = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Project_DataInterceptors_Dapper = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Project_MinimumLogLevel = table.Column<int>(type: "int", nullable: false),
                     Environment_MachineName = table.Column<string>(type: "varchar(150)", maxLength: 250, nullable: false),
                     Environment_EnvironmentName = table.Column<string>(type: "varchar(150)", maxLength: 250, nullable: false),
                     Environment_ApplicationVersion = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: false),
@@ -44,12 +58,6 @@ namespace NedMonitor.Infra.Data.Migrations
                     User_AuthenticationType = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: true),
                     User_Roles = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     User_Claims = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserPlatform_UserAgent = table.Column<string>(type: "varchar(150)", maxLength: 500, nullable: false),
-                    UserPlatform_BrowserName = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: false),
-                    UserPlatform_BrowserVersion = table.Column<string>(type: "varchar(150)", maxLength: 50, nullable: false),
-                    UserPlatform_OSName = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false),
-                    UserPlatform_OSVersion = table.Column<string>(type: "varchar(150)", maxLength: 50, nullable: false),
-                    UserPlatform_DeviceType = table.Column<string>(type: "varchar(150)", maxLength: 50, nullable: false),
                     Request_Id = table.Column<string>(type: "varchar(150)", maxLength: 50, nullable: false),
                     Request_HttpMethod = table.Column<string>(type: "varchar(150)", maxLength: 10, nullable: false),
                     Request_RequestUrl = table.Column<string>(type: "varchar(150)", maxLength: 1500, nullable: false),
@@ -58,15 +66,20 @@ namespace NedMonitor.Infra.Data.Migrations
                     Request_IsHttps = table.Column<bool>(type: "bit", nullable: false),
                     Request_QueryString = table.Column<string>(type: "varchar(150)", maxLength: 1350, nullable: false),
                     Request_RouteValues = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Request_UserAgent = table.Column<string>(type: "varchar(150)", maxLength: 1500, nullable: false),
                     Request_ClientId = table.Column<string>(type: "varchar(150)", maxLength: 250, nullable: false),
                     Request_Headers = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Request_ContentType = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: false),
+                    Request_ContentType = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: true),
                     Request_ContentLength = table.Column<long>(type: "bigint", nullable: true),
                     Request_Body = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Request_BodySize = table.Column<double>(type: "float", nullable: false),
                     Request_IsAjaxRequest = table.Column<bool>(type: "bit", nullable: false),
                     Request_IpAddress = table.Column<string>(type: "varchar(150)", maxLength: 45, nullable: true),
+                    Request_UserPlatform_UserAgent = table.Column<string>(type: "varchar(150)", maxLength: 500, nullable: false),
+                    Request_UserPlatform_BrowserName = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: false),
+                    Request_UserPlatform_BrowserVersion = table.Column<string>(type: "varchar(150)", maxLength: 50, nullable: false),
+                    Request_UserPlatform_OSName = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false),
+                    Request_UserPlatform_OSVersion = table.Column<string>(type: "varchar(150)", maxLength: 50, nullable: false),
+                    Request_UserPlatform_DeviceType = table.Column<string>(type: "varchar(150)", maxLength: 50, nullable: false),
                     Response_StatusCode = table.Column<int>(type: "int", nullable: false),
                     Response_ReasonPhrase = table.Column<string>(type: "varchar(150)", maxLength: 450, nullable: false),
                     Response_Headers = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -85,15 +98,48 @@ namespace NedMonitor.Infra.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DbQueryEntries",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Provider = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: false),
+                    Sql = table.Column<string>(type: "VARCHAR(MAX)", nullable: false),
+                    Parameters = table.Column<string>(type: "VARCHAR(MAX)", nullable: false),
+                    ExecutedAtUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DurationMs = table.Column<double>(type: "float", nullable: false),
+                    Success = table.Column<bool>(type: "bit", nullable: false),
+                    ExceptionMessage = table.Column<string>(type: "VARCHAR(MAX)", nullable: true),
+                    DbContext = table.Column<string>(type: "VARCHAR(MAX)", nullable: true),
+                    ORM = table.Column<string>(type: "varchar(150)", nullable: false),
+                    LogId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CorrelationId = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateChanged = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DbQueryEntries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DbQueryEntries_ApplicationLogs_LogId",
+                        column: x => x.LogId,
+                        principalTable: "ApplicationLogs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Exceptions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Type = table.Column<string>(type: "varchar(150)", maxLength: 500, nullable: false),
-                    Message = table.Column<string>(type: "varchar(150)", maxLength: 2000, nullable: false),
+                    Message = table.Column<string>(type: "varchar(max)", nullable: false),
                     Tracer = table.Column<string>(type: "varchar(max)", nullable: true),
-                    InnerException = table.Column<string>(type: "varchar(150)", maxLength: 2000, nullable: true),
+                    InnerException = table.Column<string>(type: "varchar(max)", nullable: true),
+                    TimestampUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Source = table.Column<string>(type: "varchar(150)", maxLength: 250, nullable: true),
                     LogId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CorrelationId = table.Column<string>(type: "varchar(150)", nullable: false),
                     RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateChanged = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -109,18 +155,54 @@ namespace NedMonitor.Infra.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HttpClientLogs",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    StartTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndTimeUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Method = table.Column<string>(type: "varchar(150)", maxLength: 10, nullable: false),
+                    Url = table.Column<string>(type: "varchar(150)", maxLength: 2048, nullable: false),
+                    UrlTemplate = table.Column<string>(type: "varchar(150)", maxLength: 2048, nullable: true),
+                    StatusCode = table.Column<int>(type: "int", nullable: false),
+                    RequestBody = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RequestHeaders = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResponseBody = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResponseHeaders = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ExceptionType = table.Column<string>(type: "varchar(150)", maxLength: 500, nullable: true),
+                    ExceptionMessage = table.Column<string>(type: "varchar(max)", nullable: true),
+                    StackTrace = table.Column<string>(type: "varchar(max)", nullable: true),
+                    InnerException = table.Column<string>(type: "varchar(max)", nullable: true),
+                    LogId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CorrelationId = table.Column<string>(type: "varchar(150)", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateChanged = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HttpClientLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_HttpClientLogs_ApplicationLogs_LogId",
+                        column: x => x.LogId,
+                        principalTable: "ApplicationLogs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "LogEntries",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LogCategory = table.Column<string>(type: "varchar(150)", maxLength: 4000, nullable: false),
                     LogSeverity = table.Column<int>(type: "int", nullable: false),
-                    LogMessage = table.Column<string>(type: "varchar(150)", maxLength: 4000, nullable: false),
+                    LogMessage = table.Column<string>(type: "VARCHAR(MAX)", nullable: false),
                     MemberType = table.Column<string>(type: "varchar(150)", nullable: true),
                     MemberName = table.Column<string>(type: "varchar(150)", maxLength: 450, nullable: true),
                     SourceLineNumber = table.Column<int>(type: "int", nullable: false),
-                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TimestampUtc = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LogId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CorrelationId = table.Column<string>(type: "varchar(150)", maxLength: 100, nullable: false),
                     RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateChanged = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -143,8 +225,9 @@ namespace NedMonitor.Infra.Data.Migrations
                     Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LogLevel = table.Column<int>(type: "int", nullable: false),
                     Key = table.Column<string>(type: "varchar(150)", maxLength: 350, nullable: true),
-                    Value = table.Column<string>(type: "varchar(150)", maxLength: 4000, nullable: false),
-                    Detail = table.Column<string>(type: "varchar(150)", maxLength: 4000, nullable: true),
+                    Value = table.Column<string>(type: "VARCHAR(MAX)", nullable: false),
+                    Detail = table.Column<string>(type: "VARCHAR(MAX)", nullable: true),
+                    CorrelationId = table.Column<string>(type: "varchar(150)", nullable: false),
                     LogId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateChanged = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -226,8 +309,18 @@ namespace NedMonitor.Infra.Data.Migrations
                 column: "User_Name");
 
             migrationBuilder.CreateIndex(
+                name: "IX_DbQueryEntries_LogId",
+                table: "DbQueryEntries",
+                column: "LogId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Exceptions_LogId",
                 table: "Exceptions",
+                column: "LogId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HttpClientLogs_LogId",
+                table: "HttpClientLogs",
                 column: "LogId");
 
             migrationBuilder.CreateIndex(
@@ -245,7 +338,13 @@ namespace NedMonitor.Infra.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "DbQueryEntries");
+
+            migrationBuilder.DropTable(
                 name: "Exceptions");
+
+            migrationBuilder.DropTable(
+                name: "HttpClientLogs");
 
             migrationBuilder.DropTable(
                 name: "LogEntries");

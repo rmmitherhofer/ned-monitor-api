@@ -18,10 +18,10 @@ public class HttpClientLogMapping : IEntityTypeConfiguration<HttpClientLog>
 
         builder.Property(c => c.DateChanged);
 
-        builder.Property(x => x.StartTime)
+        builder.Property(x => x.StartTimeUtc)
             .IsRequired();
 
-        builder.Property(x => x.EndTime)
+        builder.Property(x => x.EndTimeUtc)
             .IsRequired();
 
         builder.Property(x => x.Method)

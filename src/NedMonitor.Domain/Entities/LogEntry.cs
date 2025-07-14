@@ -1,6 +1,6 @@
-﻿using Common.Core.DomainObjects;
-using Common.Exceptions;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Zypher.Domain.Core.DomainObjects;
+using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
 
@@ -12,10 +12,11 @@ public class LogEntry : Entity
     public string? MemberType { get; private set; }
     public string? MemberName { get; private set; }
     public int SourceLineNumber { get; private set; }
-    public DateTime Timestamp { get; private set; }
+    public DateTime TimestampUtc { get; private set; }
 
     public ApplicationLog ApplicationLog { get; protected set; }
     public Guid LogId { get; private set; }
+    public string CorrelationId { get; private set; }
 
     private LogEntry() { }
 
@@ -25,6 +26,7 @@ public class LogEntry : Entity
     internal void SetParent(ApplicationLog log)
     {
         LogId = log.Id;
+        CorrelationId = log.CorrelationId;
         ApplicationLog = log;
     }
 
@@ -44,7 +46,7 @@ public class LogEntry : Entity
                 LogCategory = category,
                 LogSeverity = severity,
                 LogMessage = message,
-                Timestamp = timestamp
+                TimestampUtc = timestamp
             };
         }
 
@@ -72,6 +74,6 @@ public class LogEntry : Entity
     public override string ToString()
     {
         var memberInfo = !string.IsNullOrEmpty(MemberName) ? $"{MemberType}.{MemberName}" : "UnknownMember";
-        return $"[{Timestamp:u}] [{LogSeverity}] {LogCategory}: {LogMessage} ({memberInfo}:{SourceLineNumber})";
+        return $"[{TimestampUtc:u}] [{LogSeverity}] {LogCategory}: {LogMessage} ({memberInfo}:{SourceLineNumber})";
     }
 }

@@ -12,8 +12,8 @@ using NedMonitor.Infra.Data;
 namespace NedMonitor.Infra.Data.Migrations
 {
     [DbContext(typeof(NedMonitorContext))]
-    [Migration("20250709142716_update-column-type")]
-    partial class updatecolumntype
+    [Migration("20250714144705_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,65 @@ namespace NedMonitor.Infra.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("DbQueryEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<DateTime?>("DateChanged")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DbContext")
+                        .HasColumnType("VARCHAR(MAX)");
+
+                    b.Property<double>("DurationMs")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ExceptionMessage")
+                        .HasColumnType("VARCHAR(MAX)");
+
+                    b.Property<DateTime>("ExecutedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LogId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ORM")
+                        .IsRequired()
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<string>("Parameters")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(MAX)");
+
+                    b.Property<string>("Provider")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Sql")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(MAX)");
+
+                    b.Property<bool>("Success")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LogId");
+
+                    b.ToTable("DbQueryEntries", (string)null);
+                });
 
             modelBuilder.Entity("NedMonitor.Domain.Entities.ApplicationLog", b =>
                 {
@@ -39,8 +98,8 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("ElapsedMilliseconds")
-                        .HasColumnType("bigint");
+                    b.Property<DateTime>("EndTimeUtc")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("EndpointPath")
                         .IsRequired()
@@ -56,6 +115,12 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartTimeUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("TotalMilliseconds")
+                        .HasColumnType("float");
 
                     b.Property<string>("TraceIdentifier")
                         .HasMaxLength(200)
@@ -78,22 +143,31 @@ namespace NedMonitor.Infra.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(150)");
+
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InnerException")
-                        .HasMaxLength(2000)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("varchar(max)");
 
                     b.Property<Guid>("LogId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("varchar(max)");
 
                     b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Source")
+                        .HasMaxLength(250)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<DateTime>("TimestampUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Tracer")
@@ -111,11 +185,90 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.ToTable("Exceptions", (string)null);
                 });
 
+            modelBuilder.Entity("NedMonitor.Domain.Entities.HttpClientLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<DateTime?>("DateChanged")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndTimeUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ExceptionMessage")
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<string>("ExceptionType")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<string>("InnerException")
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<Guid>("LogId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RequestBody")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestHeaders")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResponseBody")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResponseHeaders")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StackTrace")
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<DateTime>("StartTimeUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusCode")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<string>("UrlTemplate")
+                        .HasMaxLength(2048)
+                        .HasColumnType("varchar(150)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LogId");
+
+                    b.ToTable("HttpClientLogs", (string)null);
+                });
+
             modelBuilder.Entity("NedMonitor.Domain.Entities.LogEntry", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(150)");
 
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
@@ -148,7 +301,7 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<int>("SourceLineNumber")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Timestamp")
+                    b.Property<DateTime>("TimestampUtc")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -163,6 +316,10 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CorrelationId")
+                        .IsRequired()
+                        .HasColumnType("varchar(150)");
 
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
@@ -195,6 +352,17 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.HasIndex("LogId");
 
                     b.ToTable("Notifications", (string)null);
+                });
+
+            modelBuilder.Entity("DbQueryEntry", b =>
+                {
+                    b.HasOne("NedMonitor.Domain.Entities.ApplicationLog", "ApplicationLog")
+                        .WithMany("DbQueryEntries")
+                        .HasForeignKey("LogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationLog");
                 });
 
             modelBuilder.Entity("NedMonitor.Domain.Entities.ApplicationLog", b =>
@@ -263,17 +431,11 @@ namespace NedMonitor.Infra.Data.Migrations
                             b1.Property<Guid>("ApplicationLogId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<bool>("CaptureResponseBody")
-                                .HasColumnType("bit");
-
-                            b1.Property<int>("ExecutionMode")
-                                .HasColumnType("int");
-
                             b1.Property<Guid>("Id")
                                 .HasMaxLength(200)
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<int>("MaxResponseBodySizeInMb")
+                            b1.Property<int>("MinimumLogLevel")
                                 .HasColumnType("int");
 
                             b1.Property<string>("Name")
@@ -283,9 +445,6 @@ namespace NedMonitor.Infra.Data.Migrations
 
                             b1.Property<int>("Type")
                                 .HasColumnType("int");
-
-                            b1.Property<bool>("WritePayloadToConsole")
-                                .HasColumnType("bit");
 
                             b1.HasKey("ApplicationLogId");
 
@@ -299,6 +458,129 @@ namespace NedMonitor.Infra.Data.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("ApplicationLogId");
+
+                            b1.OwnsOne("NedMonitor.Domain.Entities.DataInterceptorsSetting", "DataInterceptors", b2 =>
+                                {
+                                    b2.Property<Guid>("ProjectApplicationLogId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<string>("Dapper")
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.Property<string>("EF")
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.HasKey("ProjectApplicationLogId");
+
+                                    b2.ToTable("ApplicationLogs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ProjectApplicationLogId");
+                                });
+
+                            b1.OwnsOne("NedMonitor.Domain.Entities.ExceptionsSetting", "Exceptions", b2 =>
+                                {
+                                    b2.Property<Guid>("ProjectApplicationLogId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<string>("Expected")
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.HasKey("ProjectApplicationLogId");
+
+                                    b2.ToTable("ApplicationLogs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ProjectApplicationLogId");
+                                });
+
+                            b1.OwnsOne("NedMonitor.Domain.Entities.ExecutionModeSetting", "ExecutionMode", b2 =>
+                                {
+                                    b2.Property<Guid>("ProjectApplicationLogId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<bool>("EnableMonitorDbQueries")
+                                        .HasColumnType("bit");
+
+                                    b2.Property<bool>("EnableMonitorExceptions")
+                                        .HasColumnType("bit");
+
+                                    b2.Property<bool>("EnableMonitorHttpRequests")
+                                        .HasColumnType("bit");
+
+                                    b2.Property<bool>("EnableMonitorLogs")
+                                        .HasColumnType("bit");
+
+                                    b2.Property<bool>("EnableMonitorNotifications")
+                                        .HasColumnType("bit");
+
+                                    b2.Property<bool>("EnableNedMonitor")
+                                        .HasColumnType("bit");
+
+                                    b2.HasKey("ProjectApplicationLogId");
+
+                                    b2.ToTable("ApplicationLogs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ProjectApplicationLogId");
+                                });
+
+                            b1.OwnsOne("NedMonitor.Domain.Entities.HttpLoggingSetting", "HttpLogging", b2 =>
+                                {
+                                    b2.Property<Guid>("ProjectApplicationLogId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<bool>("CaptureResponseBody")
+                                        .HasColumnType("bit");
+
+                                    b2.Property<int>("MaxResponseBodySizeInMb")
+                                        .HasColumnType("int");
+
+                                    b2.Property<bool>("WritePayloadToConsole")
+                                        .HasColumnType("bit");
+
+                                    b2.HasKey("ProjectApplicationLogId");
+
+                                    b2.ToTable("ApplicationLogs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ProjectApplicationLogId");
+                                });
+
+                            b1.OwnsOne("NedMonitor.Domain.Entities.SensitiveDataMaskerSetting", "SensitiveDataMasking", b2 =>
+                                {
+                                    b2.Property<Guid>("ProjectApplicationLogId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<bool>("Enabled")
+                                        .HasColumnType("bit");
+
+                                    b2.Property<string>("MaskValue")
+                                        .IsRequired()
+                                        .HasColumnType("varchar(150)");
+
+                                    b2.Property<string>("SensitiveKeys")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)");
+
+                                    b2.HasKey("ProjectApplicationLogId");
+
+                                    b2.ToTable("ApplicationLogs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("ProjectApplicationLogId");
+                                });
+
+                            b1.Navigation("DataInterceptors");
+
+                            b1.Navigation("Exceptions");
+
+                            b1.Navigation("ExecutionMode")
+                                .IsRequired();
+
+                            b1.Navigation("HttpLogging");
+
+                            b1.Navigation("SensitiveDataMasking");
                         });
 
                     b.OwnsOne("NedMonitor.Domain.Entities.Request", "Request", b1 =>
@@ -372,11 +654,6 @@ namespace NedMonitor.Infra.Data.Migrations
                                 .HasMaxLength(20)
                                 .HasColumnType("varchar(150)");
 
-                            b1.Property<string>("UserAgent")
-                                .IsRequired()
-                                .HasMaxLength(1500)
-                                .HasColumnType("varchar(150)");
-
                             b1.HasKey("ApplicationLogId");
 
                             b1.HasIndex("ClientId");
@@ -387,6 +664,52 @@ namespace NedMonitor.Infra.Data.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("ApplicationLogId");
+
+                            b1.OwnsOne("NedMonitor.Domain.Entities.UserPlatform", "UserPlatform", b2 =>
+                                {
+                                    b2.Property<Guid>("RequestApplicationLogId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b2.Property<string>("BrowserName")
+                                        .IsRequired()
+                                        .HasMaxLength(100)
+                                        .HasColumnType("varchar(150)");
+
+                                    b2.Property<string>("BrowserVersion")
+                                        .IsRequired()
+                                        .HasMaxLength(50)
+                                        .HasColumnType("varchar(150)");
+
+                                    b2.Property<string>("DeviceType")
+                                        .IsRequired()
+                                        .HasMaxLength(50)
+                                        .HasColumnType("varchar(150)");
+
+                                    b2.Property<string>("OSName")
+                                        .IsRequired()
+                                        .HasMaxLength(150)
+                                        .HasColumnType("varchar(150)");
+
+                                    b2.Property<string>("OSVersion")
+                                        .IsRequired()
+                                        .HasMaxLength(50)
+                                        .HasColumnType("varchar(150)");
+
+                                    b2.Property<string>("UserAgent")
+                                        .IsRequired()
+                                        .HasMaxLength(500)
+                                        .HasColumnType("varchar(150)");
+
+                                    b2.HasKey("RequestApplicationLogId");
+
+                                    b2.ToTable("ApplicationLogs");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("RequestApplicationLogId");
+                                });
+
+                            b1.Navigation("UserPlatform")
+                                .IsRequired();
                         });
 
                     b.OwnsOne("NedMonitor.Domain.Entities.Response", "Response", b1 =>
@@ -481,49 +804,6 @@ namespace NedMonitor.Infra.Data.Migrations
                                 .HasForeignKey("ApplicationLogId");
                         });
 
-                    b.OwnsOne("NedMonitor.Domain.Entities.UserPlatform", "UserPlatform", b1 =>
-                        {
-                            b1.Property<Guid>("ApplicationLogId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("BrowserName")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("varchar(150)");
-
-                            b1.Property<string>("BrowserVersion")
-                                .IsRequired()
-                                .HasMaxLength(50)
-                                .HasColumnType("varchar(150)");
-
-                            b1.Property<string>("DeviceType")
-                                .IsRequired()
-                                .HasMaxLength(50)
-                                .HasColumnType("varchar(150)");
-
-                            b1.Property<string>("OSName")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("varchar(150)");
-
-                            b1.Property<string>("OSVersion")
-                                .IsRequired()
-                                .HasMaxLength(50)
-                                .HasColumnType("varchar(150)");
-
-                            b1.Property<string>("UserAgent")
-                                .IsRequired()
-                                .HasMaxLength(500)
-                                .HasColumnType("varchar(150)");
-
-                            b1.HasKey("ApplicationLogId");
-
-                            b1.ToTable("ApplicationLogs");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ApplicationLogId");
-                        });
-
                     b.Navigation("Diagnostic")
                         .IsRequired();
 
@@ -541,15 +821,23 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Navigation("User")
                         .IsRequired();
-
-                    b.Navigation("UserPlatform")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("NedMonitor.Domain.Entities.Exception", b =>
                 {
                     b.HasOne("NedMonitor.Domain.Entities.ApplicationLog", "ApplicationLog")
                         .WithMany("Exceptions")
+                        .HasForeignKey("LogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationLog");
+                });
+
+            modelBuilder.Entity("NedMonitor.Domain.Entities.HttpClientLog", b =>
+                {
+                    b.HasOne("NedMonitor.Domain.Entities.ApplicationLog", "ApplicationLog")
+                        .WithMany("HttpClientLogs")
                         .HasForeignKey("LogId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -581,7 +869,11 @@ namespace NedMonitor.Infra.Data.Migrations
 
             modelBuilder.Entity("NedMonitor.Domain.Entities.ApplicationLog", b =>
                 {
+                    b.Navigation("DbQueryEntries");
+
                     b.Navigation("Exceptions");
+
+                    b.Navigation("HttpClientLogs");
 
                     b.Navigation("LogEntries");
 

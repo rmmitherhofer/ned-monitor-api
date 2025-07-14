@@ -1,5 +1,4 @@
-﻿using Common.Core.DomainObjects;
-using Common.Exceptions;
+﻿using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
 
@@ -13,8 +12,7 @@ public class Request
     public bool IsHttps { get; private set; }
     public string QueryString { get; private set; }
     public IReadOnlyDictionary<string, string> RouteValues { get; private set; }
-    public string UserAgent { get; private set; }
-    public string ClientId { get; private set; }
+     public string ClientId { get; private set; }
     public IReadOnlyDictionary<string, List<string>> Headers { get; private set; }
     public string? ContentType { get; private set; }
     public long? ContentLength { get; private set; }
@@ -22,6 +20,8 @@ public class Request
     public double BodySize { get; private set; }
     public bool IsAjaxRequest { get; private set; }
     public string? IpAddress { get; private set; }
+
+    public UserPlatform UserPlatform { get; private set; }
     private Request() { }
 
     public static RequestInfoBuilder Create(string requestId, string httpMethod, string requestUrl) => new(requestId, httpMethod, requestUrl);
@@ -50,7 +50,6 @@ public class Request
             _request.IsHttps = false;
             _request.QueryString = "";
             _request.RouteValues = new Dictionary<string, string>();
-            _request.UserAgent = "";
             _request.ClientId = "";
             _request.Headers = new Dictionary<string, List<string>>();
             _request.ContentType = "";
@@ -93,7 +92,10 @@ public class Request
 
         public RequestInfoBuilder WithUserAgent(string userAgent)
         {
-            _request.UserAgent = userAgent;
+            if (string.IsNullOrEmpty(userAgent)) return this;
+
+            _request.UserPlatform = new(userAgent);
+
             return this;
         }
 

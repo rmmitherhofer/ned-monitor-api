@@ -1,10 +1,10 @@
-﻿using Api.Core.Data;
-using Common.Core.Enums;
-using Common.Logs.Extensions;
-using Common.Notifications.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NedMonitor.Domain.Entities;
+using Zypher.Domain.Core.Enums;
+using Zypher.Logs.Extensions;
+using Zypher.Notifications.Interfaces;
+using Zypher.Persistence.Abstractions.Data;
 
 namespace NedMonitor.Infra.Data;
 
@@ -68,9 +68,9 @@ public class NedMonitorContext : DbContext, IUnitOfWork
         }
         catch (System.Exception ex)
         {
-            _notification.Notify(new Common.Notifications.Messages.Notification(LogLevel.Critical, ex.GetType().Name, "SQL-Server", ex.Message));
+            _notification.Notify(new Zypher.Notifications.Messages.Notification(LogLevel.Critical, ex.GetType().Name, "SQL-Server", ex.InnerException is null ? ex.Message : ex.InnerException.Message));
 
-            _logger.LogCrit(ex.Message);
+            _logger.LogCrit(ex.InnerException is null ? ex.Message : ex.InnerException.Message);
         }
         return success;
     }

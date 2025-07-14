@@ -23,5 +23,5 @@ public class DiagnosticInfo
     /// <summary>
     /// List of dependencies involved in the operation.
     /// </summary>
-    public List<DependencyInfoRequest> Dependencies { get; set; }
+    public List<DependencyInfo> Dependencies { get; set; }
 }

@@ -1,5 +1,4 @@
-﻿using Common.Core.DomainObjects;
-using Common.Exceptions;
+﻿using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
 
@@ -8,7 +7,7 @@ public class Diagnostic
     public double MemoryUsageMb { get; private set; }
     public int DbQueryCount { get; private set; }
     public bool CacheHit { get; private set; }
-    public IReadOnlyList<DependencyInfo> Dependencies { get; private set; }
+    public IReadOnlyList<Dependency> Dependencies { get; private set; }
     private Diagnostic() => Dependencies = [];
 
     public static DiagnosticInfoBuilder Create() => new();
@@ -37,9 +36,9 @@ public class Diagnostic
             return this;
         }
 
-        public DiagnosticInfoBuilder WithDependencies(IEnumerable<DependencyInfo>? dependencies)
+        public DiagnosticInfoBuilder WithDependencies(IEnumerable<Dependency>? dependencies)
         {
-            _diagnostic.Dependencies = dependencies != null ? new List<DependencyInfo>(dependencies) : [];
+            _diagnostic.Dependencies = dependencies != null ? new List<Dependency>(dependencies) : [];
             return this;
         }
 

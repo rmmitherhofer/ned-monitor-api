@@ -28,14 +28,16 @@ public class LogCommandHandler : CommandHandler,
         return await Commit(_logRepository.UnitOfWork);
     }
 
-    private ApplicationLog BuildApplicationLog(AddLogCommand command) => ApplicationLog.Create(command.LogAttentionLevel,
+    private ApplicationLog BuildApplicationLog(AddLogCommand command) => ApplicationLog.Create(
+                command.StartTimeUtc,
+                command.EndTimeUtc,
+                command.LogAttentionLevel,
                 command.CorrelationId,
                 command.EndpointPath,
-                command.ElapsedMilliseconds,
+                command.TotalMilliseconds,
                 BuildProject(command.Project),
                 BuildEnvironment(command.Environment),
                 BuildUser(command.User),
-                BuildUserPlatform(command.Request.UserAgent),
                 BuildRequest(command.Request),
                 BuildResponse(command.Response),
                 BuildDiagnostic(command.Diagnostic))
@@ -45,13 +47,23 @@ public class LogCommandHandler : CommandHandler,
             .AddLogEntries(BuildLogEntries(command.LogEntries))
             .AddExceptions(BuildExceptions(command.Exceptions))
             .AddHttpClientLogs(BuildHttpClientLog(command.HttpClientLogs))
+            .AddDbQueryEntries(BuildDbQueryEntries(command.DbQueryEntries))
             .Build();
 
 
     private Project BuildProject(ProjectInfo project) => Project.Create(project.Id, project.Name, project.Type)
-        //.WithExecutionMode(project.ExecutionMode)
-        .WithMaxResponseBodySize(project.MaxResponseBodySizeInMb)
-        .CaptureResponseBodyEnabled(project.CaptureResponseBody)
+        .WithExecutionMode(new ExecutionModeSetting(
+            project.ExecutionMode.EnableNedMonitor, 
+            project.ExecutionMode.EnableMonitorExceptions, 
+            project.ExecutionMode.EnableMonitorNotifications, 
+            project.ExecutionMode.EnableMonitorLogs, 
+            project.ExecutionMode.EnableMonitorHttpRequests, 
+            project.ExecutionMode.EnableMonitorDbQueries))
+        .WithHttpLogging(new(project.HttpLogging.WritePayloadToConsole, project.HttpLogging.CaptureResponseBody, project.HttpLogging.MaxResponseBodySizeInMb))
+        .WithSensitiveDataMasking(new(project.SensitiveDataMasking.Enabled, project.SensitiveDataMasking.SensitiveKeys, project.SensitiveDataMasking.MaskValue))
+        .WithExceptions(new(project.Exceptions.Expected))
+        .WithDataInterceptors(new(new(project.DataInterceptors.EF.Enabled, project.DataInterceptors.EF.CaptureOptions), new(project.DataInterceptors.Dapper.Enabled, project.DataInterceptors.Dapper.CaptureOptions)))
+        .WithMinimumLogLevel(project.MinimumLogLevel)
         .Build();
 
     private Request BuildRequest(RequestInfo request) => Request.Create(request.Id, request.HttpMethod, request.Url)
@@ -100,12 +112,12 @@ public class LogCommandHandler : CommandHandler,
         }
         return User.CreateAnonymous();
     }
-    private UserPlatform BuildUserPlatform(string userAgent) => UserPlatform.Create(userAgent).Build();
 
     private Diagnostic BuildDiagnostic(DiagnosticInfo diagnostic) => Diagnostic.Create()
         .WithMemoryUsage(diagnostic.MemoryUsageMb)
         .WithDbQueryCount(diagnostic.DbQueryCount)
         .WithCacheHit(diagnostic.CacheHit)
+        .WithDependencies(BuildDependencies(diagnostic.Dependencies))
         .Build();
 
     private IEnumerable<LogEntry> BuildLogEntries(IEnumerable<LogEntryInfo> entries)
@@ -113,7 +125,7 @@ public class LogCommandHandler : CommandHandler,
         if (entries?.Any() is not true) return [];
 
         return entries.Select(le =>
-            LogEntry.Create(le.LogCategory, le.LogSeverity, le.LogMessage, le.Timestamp)
+            LogEntry.Create(le.LogCategory, le.LogSeverity, le.LogMessage, le.TimestampUtc)
                 .WithMemberType(le.MemberType)
                 .WithMemberName(le.MemberName)
                 .WithSourceLineNumber(le.SourceLineNumber)
@@ -125,9 +137,10 @@ public class LogCommandHandler : CommandHandler,
         if (exceptions?.Any() is not true) return [];
 
         return exceptions.Select(e =>
-            Domain.Entities.Exception.Create(e.Type, e.Message)
+            Domain.Entities.Exception.Create(e.Type, e.Message, e.TimestampUtc)
                 .WithTracer(e.Tracer)
                 .WithInnerException(e.InnerException)
+                .WithSource(e.Source)
                 .Build());
     }
     private IEnumerable<Notification> BuildNotifications(IEnumerable<NotificationInfo> notifications)
@@ -141,11 +154,35 @@ public class LogCommandHandler : CommandHandler,
                 .Build());
     }
 
+    private IEnumerable<Dependency> BuildDependencies(IEnumerable<DependencyInfo> dependencies)
+    {
+        if (dependencies?.Any() is not true) return [];
+
+        return dependencies.Select(d =>
+            Dependency.Create(d.Type, d.Target)
+                .WithDuration(d.DurationMs)
+                .IsSuccess(d.Success)
+                .Build());
+    }
+
+    private IEnumerable<DbQueryEntry> BuildDbQueryEntries(IEnumerable<DbQueryEntryInfo> dbQueryEntries)
+    {
+        if (dbQueryEntries?.Any() is not true) return [];
+
+        return dbQueryEntries.Select(n =>
+            DbQueryEntry.Create(n.Provider, n.ExecutedAtUtc, n.DurationMs, n.Success, n.ORM)
+                .WithSql(n.Sql)
+                .WithParameters(n.Parameters)
+                .WithException(n.ExceptionMessage)
+                .WithDbContext(n.DbContext)
+                .Build());
+    }
+
     private IEnumerable<HttpClientLog> BuildHttpClientLog(IEnumerable<HttpClientLogInfo> httpClientLogs)
     {
         if (httpClientLogs?.Any() is not true) return [];
 
-        return httpClientLogs.Select(l => HttpClientLog.Create(l.StartTime, l.EndTime, l.Method, l.Url, l.TemplateUrl, l.StatusCode)
+        return httpClientLogs.Select(l => HttpClientLog.Create(l.StartTimeUtc, l.EndTimeUtc, l.Method, l.Url, l.TemplateUrl, l.StatusCode)
             .WithRequest(l.RequestBody, l.RequestHeaders)
             .WithResponse(l.ResponseBody, l.ResponseHeaders)
             .WithException(l.ExceptionType, l.ExceptionMessage, l.StackTrace, l.InnerException)

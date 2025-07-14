@@ -1,21 +1,21 @@
-﻿using Common.Exceptions;
+﻿using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
 
-public class DependencyInfo
+public class Dependency
 {
     public string Type { get; private set; }
     public string Target { get; private set; }
     public bool Success { get; private set; }
     public int DurationMs { get; private set; }
 
-    private DependencyInfo() { }
+    private Dependency() { }
 
     public static DependencyInfoBuilder Create(string type, string target) => new(type, target);
 
     public class DependencyInfoBuilder
     {
-        private readonly DependencyInfo _dependency = new();
+        private readonly Dependency _dependency = new();
 
         public DependencyInfoBuilder(string type, string target)
         {
@@ -39,7 +39,7 @@ public class DependencyInfo
             return this;
         }
 
-        public DependencyInfo Build() => _dependency;
+        public Dependency Build() => _dependency;
     }
 
     public override string ToString() =>

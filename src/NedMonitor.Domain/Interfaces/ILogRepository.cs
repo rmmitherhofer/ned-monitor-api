@@ -1,6 +1,6 @@
-﻿using Api.Core.Data;
-using NedMonitor.Domain.Entities;
+﻿using NedMonitor.Domain.Entities;
 using NedMonitor.Domain.Filters;
+using Zypher.Persistence.Abstractions.Data;
 
 namespace NedMonitor.Domain.Interfaces;
 

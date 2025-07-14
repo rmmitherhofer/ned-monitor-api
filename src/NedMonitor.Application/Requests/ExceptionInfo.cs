@@ -24,4 +24,14 @@ public class ExceptionInfo
     /// Optional detailed additional information about the exception.
     /// </summary>
     public string? InnerException { get; set; }
+
+    /// <summary>
+    /// Timestamp (UTC) when the exception was captured.
+    /// </summary>
+    public DateTime TimestampUtc { get; set; }
+
+    /// <summary>
+    /// Optional context or source where the exception was thrown (e.g., class/method name).
+    /// </summary>
+    public string? Source { get; set; }
 }

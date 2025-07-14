@@ -1,10 +1,11 @@
-﻿using Api.Service.Controllers;
-using Common.Notifications.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using NedMonitor.Application.Commands;
 using NedMonitor.Application.Core;
 using NedMonitor.Application.Requests;
 using Swashbuckle.AspNetCore.Annotations;
+using Zypher.Api.Foundation.Controllers;
+using Zypher.Json;
+using Zypher.Notifications.Interfaces;
 
 namespace NedMonitor.Api.Controllers;
 
@@ -24,13 +25,15 @@ public class LogsController : MainController
 
     [SwaggerOperation(Tags = new[] { "Resume Summary" })]
     [HttpPost("context")]
-    public async Task<IActionResult> Post([FromBody] LogContextRequest request)
+    public async Task<IActionResult> Post([FromBody] LogContextInfo request)
     {
         if (request is null)
         {
             Notify("");
             return CustomResponse();
         }
+
+        Console.WriteLine(JsonExtensions.Serialize(request));
 
         var result = await _mediatorHandler.Send(new AddLogCommand(request));
 

@@ -12,11 +12,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MitherPack.Api.Data.Framework" Version="9.0.3" />
+		<PackageReference Include="Zypher.Api.Data" Version="1.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\NedMonitor.Domain\NedMonitor.Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
 	</ItemGroup>
 
 </Project>

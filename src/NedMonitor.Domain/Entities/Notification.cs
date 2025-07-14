@@ -1,7 +1,6 @@
-﻿
-using Common.Core.DomainObjects;
-using Common.Exceptions;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using Zypher.Domain.Core.DomainObjects;
+using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
 
@@ -14,6 +13,7 @@ public class Notification : Entity
     public string? Detail { get; private set; }
 
     public ApplicationLog ApplicationLog { get; protected set; }
+    public string CorrelationId { get; set; }
     public Guid LogId { get; private set; }
 
     private Notification() { }
@@ -23,6 +23,7 @@ public class Notification : Entity
     internal void SetParent(ApplicationLog log)
     {
         LogId = log.Id;
+        CorrelationId = log.CorrelationId;
         ApplicationLog = log;
     }
 

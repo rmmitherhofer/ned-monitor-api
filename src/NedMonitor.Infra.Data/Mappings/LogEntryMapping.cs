@@ -17,7 +17,7 @@ public class LogEntryMapping : IEntityTypeConfiguration<LogEntry>
 
         builder.Property(c => c.DateChanged);
 
-        builder.Property(x => x.Timestamp)
+        builder.Property(x => x.TimestampUtc)
             .IsRequired();
 
         builder.Property(x => x.LogCategory)
@@ -32,6 +32,10 @@ public class LogEntryMapping : IEntityTypeConfiguration<LogEntry>
         builder.Property(x => x.SourceLineNumber);
 
         builder.Property(x => x.LogId)
+            .IsRequired();
+
+        builder.Property(x => x.CorrelationId)
+            .HasMaxLength(100)
             .IsRequired();
 
         builder.HasOne(x => x.ApplicationLog)

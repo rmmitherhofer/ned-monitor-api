@@ -1,4 +1,4 @@
-﻿using Api.Core.Data.Filters;
+﻿using Zypher.Persistence.Abstractions.Data.Filters;
 
 namespace NedMonitor.Domain.Filters;
 

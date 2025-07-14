@@ -1,18 +1,20 @@
-﻿using Common.Exceptions;
+﻿using Microsoft.Extensions.Logging;
 using NedMonitor.Domain.Enums;
+using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
 
 public class Project
 {
     public Guid Id { get; private set; }
-    public string Name { get; private set; }
     public ProjectType Type { get; private set; }
-    public SnapTraceExecutionMode ExecutionMode { get; private set; }
-    public int MaxResponseBodySizeInMb { get; private set; }
-    public bool CaptureResponseBody { get; private set; }
-    public bool WritePayloadToConsole { get; private set; }
-
+    public string Name { get; private set; }
+    public ExecutionModeSetting ExecutionMode { get; private set; }
+    public HttpLoggingSetting? HttpLogging { get; private set; }
+    public SensitiveDataMaskerSetting? SensitiveDataMasking { get; private set; }
+    public ExceptionsSetting? Exceptions { get; private set; }
+    public DataInterceptorsSetting? DataInterceptors { get; private set; }
+    public LogLevel MinimumLogLevel { get; private set; }
     private Project() { }
 
     public static ProjectInfoBuilder Create(Guid id, string name, ProjectType type) => new(id, name, type);
@@ -30,36 +32,43 @@ public class Project
             {
                 Id = id,
                 Name = name,
-                Type = type,
-                ExecutionMode = SnapTraceExecutionMode.Disabled,
-                MaxResponseBodySizeInMb = 1,
-                CaptureResponseBody = false,
-                WritePayloadToConsole = false
+                Type = type
             };
         }
 
-        public ProjectInfoBuilder WithExecutionMode(SnapTraceExecutionMode executionMode)
+        public ProjectInfoBuilder WithExecutionMode(ExecutionModeSetting executionMode)
         {
-            _project.ExecutionMode = executionMode;
+            _project.ExecutionMode = executionMode ?? throw new ArgumentNullException(nameof(executionMode));
             return this;
         }
 
-        public ProjectInfoBuilder WithMaxResponseBodySize(int maxSizeMb)
+        public ProjectInfoBuilder WithHttpLogging(HttpLoggingSetting httpLogging)
         {
-            if (maxSizeMb < 0) throw new DomainException("MaxResponseBodySizeInMb must be >= 0.");
-            _project.MaxResponseBodySizeInMb = maxSizeMb;
+            _project.HttpLogging = httpLogging;
             return this;
         }
 
-        public ProjectInfoBuilder CaptureResponseBodyEnabled(bool enabled)
+        public ProjectInfoBuilder WithSensitiveDataMasking(SensitiveDataMaskerSetting masking)
         {
-            _project.CaptureResponseBody = enabled;
+            _project.SensitiveDataMasking = masking;
             return this;
         }
 
-        public ProjectInfoBuilder WritePayloadToConsoleEnabled(bool enabled)
+        public ProjectInfoBuilder WithExceptions(ExceptionsSetting exceptions)
         {
-            _project.WritePayloadToConsole = enabled;
+            _project.Exceptions = exceptions;
+            return this;
+        }
+
+        public ProjectInfoBuilder WithDataInterceptors(DataInterceptorsSetting interceptors)
+        {
+            _project.DataInterceptors = interceptors;
+            return this;
+        }
+
+        public ProjectInfoBuilder WithMinimumLogLevel(LogLevel level)
+        {
+            _project.MinimumLogLevel = level;
             return this;
         }
 

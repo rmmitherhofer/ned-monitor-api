@@ -1,6 +1,6 @@
-﻿using Common.Core.DomainObjects;
-using Common.Extensions;
-using System.Net;
+﻿using System.Net;
+using Zypher.Domain.Core.DomainObjects;
+using Zypher.Extensions.Core;
 
 namespace NedMonitor.Domain.Entities;
 
@@ -9,8 +9,8 @@ namespace NedMonitor.Domain.Entities;
 /// </summary>
 public class HttpClientLog : Entity
 {
-    public DateTime StartTime { get; init; }
-    public DateTime EndTime { get; init; }
+    public DateTime StartTimeUtc { get; init; }
+    public DateTime EndTimeUtc { get; init; }
     public string Method { get; init; } = null!;
     public string Url { get; init; } = null!;
     public string? UrlTemplate { get; init; }
@@ -27,9 +27,10 @@ public class HttpClientLog : Entity
     public string? StackTrace { get; private set; }
     public string? InnerException { get; private set; }
 
-    public long DurationInMilliseconds => (long)(EndTime - StartTime).TotalMilliseconds;
+    public long DurationInMilliseconds => (long)(EndTimeUtc - StartTimeUtc).TotalMilliseconds;
 
     public Guid LogId { get; private set; }
+    public string CorrelationId { get; private set; }
     public ApplicationLog ApplicationLog { get; private set; } = null!;
 
     private HttpClientLog() { }
@@ -40,12 +41,13 @@ public class HttpClientLog : Entity
     internal void SetParent(ApplicationLog log)
     {
         LogId = log.Id;
+        CorrelationId = log.CorrelationId;
         ApplicationLog = log;
     }
 
     public override string ToString()
     {
-        return $"{Method} {Url} - {StatusCode} - {DurationInMilliseconds.GetTime()}";
+        return $"{Method} {Url} - {StatusCode} - {DurationInMilliseconds.GetFormattedTime()}";
     }
 
     public class HttpClientLogBuilder
@@ -56,8 +58,8 @@ public class HttpClientLog : Entity
         {
             _log = new HttpClientLog
             {
-                StartTime = startTime,
-                EndTime = endTime,
+                StartTimeUtc = startTime,
+                EndTimeUtc = endTime,
                 Method = method,
                 Url = url,
                 UrlTemplate = template,

@@ -14,7 +14,7 @@
 	<ItemGroup>
 		<PackageReference Include="FluentValidation" Version="12.0.0" />
 		<PackageReference Include="MediatR" Version="12.5.0" />
-		<PackageReference Include="MitherPack.Api.Requests" Version="9.0.1" />
+		<PackageReference Include="Zypher.Requests" Version="1.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

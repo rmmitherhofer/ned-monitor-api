@@ -1,4 +1,4 @@
-﻿using Common.Exceptions;
+﻿using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
 

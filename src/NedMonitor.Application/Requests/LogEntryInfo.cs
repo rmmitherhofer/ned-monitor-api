@@ -42,5 +42,5 @@ public class LogEntryInfo
     /// <summary>
     /// Timestamp when the log entry was created.
     /// </summary>
-    public DateTime Timestamp { get; set; }
+    public DateTime TimestampUtc { get; set; }
 }

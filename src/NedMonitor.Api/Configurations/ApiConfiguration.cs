@@ -1,5 +1,4 @@
-﻿using Api.Service.Configurations;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -10,6 +9,7 @@ using NedMonitor.Domain.Interfaces;
 using NedMonitor.Infra.Data;
 using NedMonitor.Infra.Data.Repositories;
 using System.Reflection;
+using Zypher.Api.Foundation.Configurations;
 
 namespace NedMonitor.Api.Configurations;
 

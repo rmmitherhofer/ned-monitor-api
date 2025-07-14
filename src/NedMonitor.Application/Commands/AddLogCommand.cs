@@ -2,12 +2,20 @@
 using NedMonitor.Application.Core;
 using NedMonitor.Application.Requests;
 using NedMonitor.Domain.Enums;
-using System.Text.Json.Serialization;
 
 namespace NedMonitor.Application.Commands;
 
 public class AddLogCommand : Command
 {
+    /// <summary>
+    /// Gets or sets the UTC timestamp indicating when the operation started.
+    /// </summary>
+    public DateTime StartTimeUtc { get; set; }
+
+    /// <summary>
+    /// Gets or sets the UTC timestamp indicating when the operation ended.
+    /// </summary>
+    public DateTime EndTimeUtc { get; set; }
     /// <summary>
     /// Attention level of the log.
     /// </summary>
@@ -26,7 +34,7 @@ public class AddLogCommand : Command
     /// <summary>
     /// Elapsed time of the request in milliseconds.
     /// </summary>
-    public long ElapsedMilliseconds { get; set; }
+    public double TotalMilliseconds { get; set; }
     /// <summary>
     /// Unique identifier for the request trace.
     /// </summary>
@@ -84,12 +92,16 @@ public class AddLogCommand : Command
 
     public IEnumerable<HttpClientLogInfo> HttpClientLogs { get; set; }
 
-    public AddLogCommand(LogContextRequest request)
+    public IEnumerable<DbQueryEntryInfo> DbQueryEntries { get; set; }
+
+    public AddLogCommand(LogContextInfo request)
     {
+        StartTimeUtc = request.StartTimeUtc;
+        EndTimeUtc = request.EndTimeUtc;
         LogAttentionLevel = request.LogAttentionLevel;
         CorrelationId = request.CorrelationId;
         EndpointPath = request.Path;
-        ElapsedMilliseconds = request.ElapsedMilliseconds;
+        TotalMilliseconds = request.TotalMilliseconds;
         TraceIdentifier = request.TraceIdentifier;
         ErrorCategory = request.ErrorCategory;
         Project = request.Project;
@@ -102,6 +114,7 @@ public class AddLogCommand : Command
         LogEntries = request.LogEntries;
         Exceptions = request.Exceptions;
         HttpClientLogs = request.HttpClientLogs;
+        DbQueryEntries = request.DbQueryEntries;
     }
 
     public override bool IsValid()
@@ -176,9 +189,9 @@ public class AddLogCommand : Command
                 .IsInEnum()
                 .WithMessage("LogAttentionLevel must be a valid enum value.");
 
-            RuleFor(l => l.ElapsedMilliseconds)
+            RuleFor(l => l.TotalMilliseconds)
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("ElapsedMilliseconds must be zero or greater.");
+                .WithMessage("TotalMilliseconds must be zero or greater.");
         }
     }
 }
