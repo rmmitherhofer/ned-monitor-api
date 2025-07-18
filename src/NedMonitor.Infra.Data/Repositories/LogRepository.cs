@@ -36,6 +36,8 @@ public class LogRepository : ILogRepository
             .Include(l => l.Notifications)
             .Include(l => l.LogEntries)
             .Include(l => l.Exceptions)
+            .Include(l => l.HttpClientLogs)
+            .Include(l => l.DbQueryEntries)
             .OrderBy(filter.OrderBy)
             .Page(filter.PageNumber, filter.PageSize)
             .AsNoTracking()
@@ -57,12 +59,16 @@ public class LogRepository : ILogRepository
     {
         _logger.LogInfo("Retrieving all logs");
 
-        return await _context.Logs
+        var teste =  await _context.Logs
             .Include(l => l.Notifications)
             .Include(l => l.LogEntries)
             .Include(l => l.Exceptions)
+            .Include(l => l.HttpClientLogs)
+            .Include(l => l.DbQueryEntries)
             .AsNoTracking()
             .ToListAsync();
+
+        return teste;
     }
 
     public async Task<ApplicationLog?> GetById(Guid id)

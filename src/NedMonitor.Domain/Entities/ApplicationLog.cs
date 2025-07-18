@@ -5,11 +5,11 @@ using Zypher.Domain.Exceptions;
 namespace NedMonitor.Domain.Entities;
 public class ApplicationLog : Entity, IAggregateRoot
 {
-    public DateTime StartTimeUtc { get; set; }
-    public DateTime EndTimeUtc { get; set; }
+    public DateTime StartTimeUtc { get; private set; }
+    public DateTime EndTimeUtc { get; private set; }
     public LogAttentionLevel LogAttentionLevel { get; private set; }
     public string CorrelationId { get; private set; }
-    public string EndpointPath { get; private set; }
+    public string Path { get; private set; }
     public double TotalMilliseconds { get; private set; }
     public string? TraceIdentifier { get; private set; }
     public string? ErrorCategory { get; private set; }
@@ -19,19 +19,22 @@ public class ApplicationLog : Entity, IAggregateRoot
     public Request Request { get; private set; }
     public Response Response { get; private set; }
     public Diagnostic Diagnostic { get; private set; }
-    public IReadOnlyCollection<Notification> Notifications { get; private set; }
-    public IReadOnlyCollection<LogEntry> LogEntries { get; private set; }
-    public IReadOnlyCollection<Exception> Exceptions { get; private set; }
-    public IReadOnlyCollection<HttpClientLog> HttpClientLogs { get; private set; }
-    public IReadOnlyCollection<DbQueryEntry> DbQueryEntries { get; private set; }
-    private ApplicationLog()
-    {
-        Notifications = [];
-        LogEntries = [];
-        Exceptions = [];
-        HttpClientLogs = [];
-        DbQueryEntries = [];
-    }
+
+    private List<Notification> _notifications = [];
+    public IReadOnlyCollection<Notification> Notifications => _notifications.AsReadOnly();
+
+    private List<LogEntry> _logEntries = [];
+    public IReadOnlyCollection<LogEntry> LogEntries => _logEntries.AsReadOnly();
+
+    private List<Exception> _exceptions = [];
+    public IReadOnlyCollection<Exception> Exceptions => _exceptions.AsReadOnly();
+
+    private List<HttpClientLog> _httpClientLogs = [];
+    public IReadOnlyCollection<HttpClientLog> HttpClientLogs => _httpClientLogs.AsReadOnly();
+
+    private List<DbQueryEntry> _dbQueryEntries = [];
+    public IReadOnlyCollection<DbQueryEntry> DbQueryEntries => _dbQueryEntries.AsReadOnly();
+    private ApplicationLog() { }
 
     public static ApplicationLogBuilder Create(
         DateTime startTimeUtc,
@@ -89,7 +92,7 @@ public class ApplicationLog : Entity, IAggregateRoot
                 throw new DomainException("CorrelationId is required");
 
             if (string.IsNullOrWhiteSpace(endpointPath))
-                throw new DomainException("EndpointPath is required");
+                throw new DomainException("Path is required");
 
             if (project == null) throw new DomainException("Project is required");
             if (environment == null) throw new DomainException("Environment is required");
@@ -104,7 +107,7 @@ public class ApplicationLog : Entity, IAggregateRoot
                 EndTimeUtc = endTimeUtc,
                 LogAttentionLevel = logAttentionLevel,
                 CorrelationId = correlationId,
-                EndpointPath = endpointPath,
+                Path = endpointPath,
                 TotalMilliseconds = totalMilliseconds,
                 Project = project,
                 Environment = environment,
@@ -169,7 +172,7 @@ public class ApplicationLog : Entity, IAggregateRoot
             return this;
         }
 
-        public ApplicationLogBuilder AddHttpClientLog(HttpClientLog  httpClientLog)
+        public ApplicationLogBuilder AddHttpClientLog(HttpClientLog httpClientLog)
         {
             httpClientLog.SetParent(_log);
             _httpClientLogs.Add(httpClientLog);
@@ -199,16 +202,16 @@ public class ApplicationLog : Entity, IAggregateRoot
 
         public ApplicationLog Build()
         {
-            _log.Notifications = _notifications;
-            _log.LogEntries = _logEntries;
-            _log.Exceptions = _exceptions;
-            _log.HttpClientLogs = _httpClientLogs;
-            _log.DbQueryEntries = _dbQueryEntries;
+            _log._notifications = _notifications;
+            _log._logEntries = _logEntries;
+            _log._exceptions = _exceptions;
+            _log._httpClientLogs = _httpClientLogs;
+            _log._dbQueryEntries = _dbQueryEntries;
             return _log;
         }
     }
     public override string ToString()
     {
-        return $"Log [{Id}] - Level: {LogAttentionLevel} - CorrelationId: {CorrelationId} - Endpoint: {EndpointPath} - CreatedAt: {RegistrationDate}";
+        return $"Log [{Id}] - Level: {LogAttentionLevel} - CorrelationId: {CorrelationId} - Endpoint: {Path} - CreatedAt: {RegistrationDate}";
     }
 }

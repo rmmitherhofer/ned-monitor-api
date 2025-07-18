@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NedMonitor.Application.Commands;
 using NedMonitor.Application.Core;
+using NedMonitor.Application.Queries;
 using NedMonitor.Application.Requests;
+using NedMonitor.Domain.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Zypher.Api.Foundation.Controllers;
 using Zypher.Json;
@@ -14,13 +16,14 @@ namespace NedMonitor.Api.Controllers;
 public class LogsController : MainController
 {
     private readonly ILogger<LogsController> _logger; 
-    
     private readonly IMediatorHandler _mediatorHandler;
+    private readonly ILogQuery _logQuery;
 
-    public LogsController(INotificationHandler notification, ILogger<LogsController> logger, IMediatorHandler mediatorHandler) : base(notification)
+    public LogsController(INotificationHandler notification, ILogger<LogsController> logger, IMediatorHandler mediatorHandler, ILogQuery logQuery) : base(notification)
     {
         _logger = logger;
         _mediatorHandler = mediatorHandler;
+        _logQuery = logQuery;
     }
 
     [SwaggerOperation(Tags = new[] { "Resume Summary" })]
@@ -38,5 +41,11 @@ public class LogsController : MainController
         var result = await _mediatorHandler.Send(new AddLogCommand(request));
 
         return CustomResponse(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get([FromQuery]LogFilterRequest request)
+    {
+        return CustomResponse(await _logQuery.Get(request));
     }
 }

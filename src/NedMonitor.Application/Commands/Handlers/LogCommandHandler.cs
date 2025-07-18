@@ -2,6 +2,7 @@
 using MediatR;
 using NedMonitor.Application.Core;
 using NedMonitor.Application.Requests;
+using NedMonitor.Application.Responses;
 using NedMonitor.Domain.Entities;
 using NedMonitor.Domain.Interfaces;
 
@@ -158,11 +159,7 @@ public class LogCommandHandler : CommandHandler,
     {
         if (dependencies?.Any() is not true) return [];
 
-        return dependencies.Select(d =>
-            Dependency.Create(d.Type, d.Target)
-                .WithDuration(d.DurationMs)
-                .IsSuccess(d.Success)
-                .Build());
+        return dependencies.Select(d => new Dependency(d.Type, d.Target, d.Success, d.DurationMs));
     }
 
     private IEnumerable<DbQueryEntry> BuildDbQueryEntries(IEnumerable<DbQueryEntryInfo> dbQueryEntries)

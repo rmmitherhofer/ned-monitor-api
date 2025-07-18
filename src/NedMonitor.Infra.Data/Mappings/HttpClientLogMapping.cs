@@ -26,13 +26,16 @@ public class HttpClientLogMapping : IEntityTypeConfiguration<HttpClientLog>
 
         builder.Property(x => x.Method)
             .HasMaxLength(10)
+            .HasColumnType("varchar(10)")
             .IsRequired();
 
         builder.Property(x => x.UrlTemplate)
+            .HasColumnType("nvarchar(2048)")
             .HasMaxLength(2048);
 
         builder.Property(x => x.Url)
             .HasMaxLength(2048)
+            .HasColumnType("nvarchar(2048)")
             .IsRequired();
 
         builder.Property(x => x.StatusCode)
@@ -67,6 +70,7 @@ public class HttpClientLogMapping : IEntityTypeConfiguration<HttpClientLog>
             .HasColumnType("nvarchar(max)");
 
         builder.Property(x => x.ExceptionType)
+            .HasColumnType("nvarchar(500)")
             .HasMaxLength(500);
 
         builder.Property(x => x.ExceptionMessage)
@@ -83,9 +87,9 @@ public class HttpClientLogMapping : IEntityTypeConfiguration<HttpClientLog>
         builder.Property(x => x.LogId)
             .IsRequired();
 
-        builder.HasOne(x => x.ApplicationLog)
-            .WithMany(x => x.HttpClientLogs)
-            .HasForeignKey(x => x.LogId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(x => x.CorrelationId)
+    .HasColumnType("nvarchar(100)")
+    .HasMaxLength(100)
+    .IsRequired();
     }
 }

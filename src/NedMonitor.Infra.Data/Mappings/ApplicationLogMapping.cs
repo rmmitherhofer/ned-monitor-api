@@ -30,35 +30,38 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
 
         builder.Property(x => x.CorrelationId)
             .IsRequired()
+            .HasColumnType("varchar(100)")
             .HasMaxLength(100);
 
-        builder.Property(x => x.EndpointPath)
-            .IsRequired()
-            .HasMaxLength(9000);
+        builder.Property(x => x.Path)
+            .HasColumnType("nvarchar(max)")
+            .IsRequired();
 
         builder.Property(x => x.TotalMilliseconds)
             .IsRequired();
 
         builder.Property(x => x.TraceIdentifier)
+            .HasColumnType("varchar(200)")
             .HasMaxLength(200)
             .IsRequired(false);
 
         builder.Property(x => x.ErrorCategory)
             .HasMaxLength(100)
+            .HasColumnType("nvarchar(100)")
             .IsRequired(false);
 
         builder.HasIndex(x => x.CorrelationId);
-        builder.HasIndex(x => x.EndpointPath);
+        //builder.HasIndex(x => x.Path);
         builder.HasIndex(x => x.ErrorCategory);
 
         builder.OwnsOne(x => x.Project, p =>
         {
             p.Property(p => p.Id)
-                .IsRequired()
-                .HasMaxLength(200);
+                .IsRequired();
 
             p.Property(p => p.Name)
                 .IsRequired()
+                .HasColumnType("varchar(200)")
                 .HasMaxLength(200);
 
             p.Property(p => p.Type)
@@ -115,6 +118,7 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
                     .IsRequired();
 
                 sd.Property(sd => sd.MaskValue)
+                    .HasColumnType("varchar(30)")
                     .IsRequired();
             });
 
@@ -151,14 +155,17 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
         {
             e.Property(e => e.MachineName)
                 .IsRequired()
+                .HasColumnType("varchar(250)")
                 .HasMaxLength(250);
 
             e.Property(e => e.EnvironmentName)
                 .IsRequired()
+                .HasColumnType("varchar(250)")
                 .HasMaxLength(250);
 
             e.Property(e => e.ApplicationVersion)
                 .IsRequired()
+                .HasColumnType("varchar(100)")
                 .HasMaxLength(100);
 
             e.Property(e => e.ThreadId)
@@ -170,27 +177,33 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
         builder.OwnsOne(x => x.User, u =>
         {
             u.Property(u => u.Id)
-            .HasMaxLength(250);
+                .HasColumnType("varchar(100)");
 
             u.Property(u => u.Name)
+                .HasColumnType("nvarchar(450)")
                 .HasMaxLength(450);
 
             u.Property(u => u.AccountCode)
+            .HasColumnType("varchar(250)")
                 .HasMaxLength(250);
 
             u.Property(u => u.Document)
+            .HasColumnType("varchar(80)")
                 .HasMaxLength(80);
 
             u.Property(u => u.Email)
+            .HasColumnType("varchar(320)")
                 .HasMaxLength(320);
 
             u.Property(u => u.TenantId)
+            .HasColumnType("varchar(250)")
                 .HasMaxLength(250);
 
             u.Property(u => u.IsAuthenticated)
                 .IsRequired();
 
             u.Property(u => u.AuthenticationType)
+            .HasColumnType("nvarchar(100)")
                 .HasMaxLength(100);
 
             u.Property(u => u.Roles)
@@ -215,22 +228,27 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
         {
             rq.Property(rq => rq.Id)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasColumnType("varchar(100)")
+            .HasMaxLength(100);
 
             rq.Property(rq => rq.HttpMethod)
                 .IsRequired()
+                .HasColumnType("varchar(10)")
                 .HasMaxLength(10);
 
             rq.Property(rq => rq.RequestUrl)
                 .IsRequired()
+                .HasColumnType("nvarchar(1500)")
                 .HasMaxLength(1500);
 
             rq.Property(rq => rq.Scheme)
                 .IsRequired()
+                .HasColumnType("varchar(20)")
                 .HasMaxLength(20);
 
             rq.Property(rq => rq.Protocol)
                 .IsRequired()
+                .HasColumnType("varchar(10)")
                 .HasMaxLength(10);
 
             rq.Property(rq => rq.IsHttps)
@@ -238,6 +256,7 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
 
             rq.Property(rq => rq.QueryString)
                 .IsRequired()
+                .HasColumnType("nvarchar(1350)")
                 .HasMaxLength(1350);
 
             rq.Property(rq => rq.RouteValues)
@@ -250,26 +269,32 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
             rq.OwnsOne(x => x.UserPlatform, up =>
             {
                 up.Property(up => up.UserAgent)
+                .HasColumnType("varchar(500)")
                     .HasMaxLength(500);
 
                 up.Property(up => up.BrowserName)
+                .HasColumnType("varchar(100)")
                     .HasMaxLength(100);
 
                 up.Property(up => up.BrowserVersion)
+                .HasColumnType("varchar(50)")
                     .HasMaxLength(50);
 
                 up.Property(up => up.OSName)
+                .HasColumnType("varchar(150)")
                     .HasMaxLength(150);
 
                 up.Property(up => up.OSVersion)
+                .HasColumnType("varchar(50)")
                     .HasMaxLength(50);
 
                 up.Property(up => up.DeviceType)
+                .HasColumnType("varchar(50)")
                     .HasMaxLength(50);
             });
 
             rq.Property(rq => rq.ClientId)
-                .IsRequired()
+                .HasColumnType("nvarchar(250)")
                 .HasMaxLength(250);
 
             rq.Property(rq => rq.Headers)
@@ -279,6 +304,7 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
                 .HasColumnType("nvarchar(max)");
 
             rq.Property(rq => rq.ContentType)
+            .HasColumnType("varchar(100)")
                 .HasMaxLength(100);
 
             rq.Property(rq => rq.ContentLength)
@@ -297,6 +323,7 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
                 .IsRequired();
 
             rq.Property(rq => rq.IpAddress)
+            .HasColumnType("varchar(45)")
                 .HasMaxLength(45);
 
             rq.HasIndex(rq => rq.Id);
@@ -310,6 +337,7 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
             .IsRequired();
 
             rp.Property(rp => rp.ReasonPhrase)
+            .HasColumnType("varchar(450)")
                 .HasMaxLength(450);
 
             rp.Property(rp => rp.Headers)
@@ -348,22 +376,22 @@ public class ApplicationLogMapping : IEntityTypeConfiguration<ApplicationLog>
 
         builder.HasMany(c => c.Notifications)
             .WithOne(a => a.ApplicationLog)
-            .HasForeignKey(a => a.LogId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(a => a.LogId);
 
         builder.HasMany(c => c.LogEntries)
             .WithOne(a => a.ApplicationLog)
-            .HasForeignKey(a => a.LogId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(a => a.LogId);
 
         builder.HasMany(c => c.Exceptions)
             .WithOne(a => a.ApplicationLog)
-            .HasForeignKey(a => a.LogId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(a => a.LogId);
 
         builder.HasMany(c => c.DbQueryEntries)
             .WithOne(a => a.ApplicationLog)
-            .HasForeignKey(a => a.LogId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(a => a.LogId);
+
+        builder.HasMany(c => c.HttpClientLogs)
+            .WithOne(a => a.ApplicationLog)
+            .HasForeignKey(a => a.LogId);
     }
 }

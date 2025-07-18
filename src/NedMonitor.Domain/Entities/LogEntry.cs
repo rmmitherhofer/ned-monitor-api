@@ -18,7 +18,7 @@ public class LogEntry : Entity
     public Guid LogId { get; private set; }
     public string CorrelationId { get; private set; }
 
-    private LogEntry() { }
+    protected LogEntry() { }
 
     public static LogEntryInfoBuilder Create(string category, LogLevel severity, string message, DateTime timestamp)
         => new(category, severity, message, timestamp);
@@ -27,7 +27,6 @@ public class LogEntry : Entity
     {
         LogId = log.Id;
         CorrelationId = log.CorrelationId;
-        ApplicationLog = log;
     }
 
     public class LogEntryInfoBuilder

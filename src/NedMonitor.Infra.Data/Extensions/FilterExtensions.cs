@@ -7,6 +7,9 @@ public static class FilterExtensions
 {
     public static IQueryable<ApplicationLog> Filter(this IQueryable<ApplicationLog> query, LogFilter filter)
     {
+        if (!string.IsNullOrEmpty(filter.CorrelationId))
+            query = query.Where(l => l.CorrelationId.Equals(filter.CorrelationId));
+
         if (filter.StartDate.HasValue)
             query = query.Where(c => c.RegistrationDate >= filter.StartDate.Value);
 

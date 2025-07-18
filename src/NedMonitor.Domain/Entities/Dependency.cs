@@ -1,4 +1,5 @@
-﻿using Zypher.Domain.Exceptions;
+﻿using System.Text.Json.Serialization;
+using Zypher.Domain.Exceptions;
 
 namespace NedMonitor.Domain.Entities;
 
@@ -9,39 +10,19 @@ public class Dependency
     public bool Success { get; private set; }
     public int DurationMs { get; private set; }
 
-    private Dependency() { }
+    protected Dependency() { }
 
-    public static DependencyInfoBuilder Create(string type, string target) => new(type, target);
-
-    public class DependencyInfoBuilder
+    public Dependency(string type, string target, bool success, int durationMs)
     {
-        private readonly Dependency _dependency = new();
+        if (string.IsNullOrWhiteSpace(type)) throw new DomainException("Type is required.");
+        if (string.IsNullOrWhiteSpace(target)) throw new DomainException("Target is required.");
+        if (durationMs < 0) throw new DomainException("Duration must be non-negative.");
 
-        public DependencyInfoBuilder(string type, string target)
-        {
-            if (string.IsNullOrWhiteSpace(type)) throw new DomainException("Type is required.");
-            if (string.IsNullOrWhiteSpace(target)) throw new DomainException("Target is required.");
-
-            _dependency.Type = type;
-            _dependency.Target = target;
-        }
-
-        public DependencyInfoBuilder IsSuccess(bool success)
-        {
-            _dependency.Success = success;
-            return this;
-        }
-
-        public DependencyInfoBuilder WithDuration(int durationMs)
-        {
-            if (durationMs < 0) throw new DomainException("Duration must be non-negative.");
-            _dependency.DurationMs = durationMs;
-            return this;
-        }
-
-        public Dependency Build() => _dependency;
+        Type = type;
+        Target = target;
+        Success = success;
+        DurationMs = durationMs;
     }
-
     public override string ToString() =>
         $"{Type} => {Target} (Success: {Success}, Duration: {DurationMs}ms)";
 }

@@ -22,11 +22,11 @@ public class NedMonitorContext : DbContext, IUnitOfWork
         _notification = notification;
     }
 
-    public virtual DbSet<ApplicationLog> Logs { get; set; }
-    public virtual DbSet<Domain.Entities.Exception> Exceptions { get; set; }
-    public virtual DbSet<LogEntry> Entries { get; set; }
-    public virtual DbSet<Notification> Notifications { get; set; }
-    public virtual DbSet<HttpClientLog> HttpClientLogs { get; set; }
+    public DbSet<ApplicationLog> Logs { get; set; }
+    public DbSet<Domain.Entities.Exception> Exceptions { get; set; }
+    public DbSet<LogEntry> Entries { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<HttpClientLog> HttpClientLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

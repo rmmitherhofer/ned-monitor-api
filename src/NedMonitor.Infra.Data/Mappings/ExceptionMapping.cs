@@ -20,10 +20,12 @@ public class ExceptionMapping : IEntityTypeConfiguration<Domain.Entities.Excepti
             .IsRequired();
 
         builder.Property(c => c.Source)
+            .HasColumnType("nvarchar(250)")
             .HasMaxLength(250);
 
         builder.Property(x => x.Type)
             .IsRequired()
+            .HasColumnType("nvarchar(500)")
             .HasMaxLength(500);
 
         builder.Property(x => x.Message)
@@ -39,9 +41,9 @@ public class ExceptionMapping : IEntityTypeConfiguration<Domain.Entities.Excepti
         builder.Property(x => x.LogId)
             .IsRequired();
 
-        builder.HasOne(x => x.ApplicationLog)
-            .WithMany(x => x.Exceptions)
-            .HasForeignKey(x => x.LogId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(x => x.CorrelationId)
+    .HasColumnType("nvarchar(100)")
+    .HasMaxLength(100)
+    .IsRequired();
     }
 }

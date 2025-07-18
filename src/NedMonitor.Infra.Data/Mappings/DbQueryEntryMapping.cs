@@ -18,6 +18,7 @@ public class DbQueryEntryMapping : IEntityTypeConfiguration<DbQueryEntry>
         builder.Property(c => c.DateChanged);
 
         builder.Property(x => x.Provider)
+            .HasColumnType("nvarchar(100)")
             .HasMaxLength(100)
             .IsRequired();
 
@@ -47,18 +48,15 @@ public class DbQueryEntryMapping : IEntityTypeConfiguration<DbQueryEntry>
             .HasColumnType("VARCHAR(MAX)");
 
         builder.Property(x => x.ORM)
+            .HasColumnType("nvarchar(60)")
             .IsRequired();
 
         builder.Property(x => x.LogId)
             .IsRequired();
 
         builder.Property(x => x.CorrelationId)
+            .HasColumnType("nvarchar(100)")
             .HasMaxLength(100)
             .IsRequired();
-
-        builder.HasOne(x => x.ApplicationLog)
-            .WithMany(x => x.DbQueryEntries)
-            .HasForeignKey(x => x.LogId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

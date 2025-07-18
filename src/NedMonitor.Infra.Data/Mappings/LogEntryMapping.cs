@@ -21,12 +21,14 @@ public class LogEntryMapping : IEntityTypeConfiguration<LogEntry>
             .IsRequired();
 
         builder.Property(x => x.LogCategory)
+            .HasColumnType("nvarchar(4000)")
             .HasMaxLength(4000);
 
         builder.Property(x => x.LogMessage)
             .HasColumnType("VARCHAR(MAX)");
 
         builder.Property(x => x.MemberName)
+            .HasColumnType("nvarchar(450)")
             .HasMaxLength(450); 
 
         builder.Property(x => x.SourceLineNumber);
@@ -35,12 +37,8 @@ public class LogEntryMapping : IEntityTypeConfiguration<LogEntry>
             .IsRequired();
 
         builder.Property(x => x.CorrelationId)
+            .HasColumnType("nvarchar(100)")
             .HasMaxLength(100)
             .IsRequired();
-
-        builder.HasOne(x => x.ApplicationLog)
-            .WithMany(x => x.LogEntries)
-            .HasForeignKey(x => x.LogId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

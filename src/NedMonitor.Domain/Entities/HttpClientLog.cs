@@ -29,9 +29,10 @@ public class HttpClientLog : Entity
 
     public long DurationInMilliseconds => (long)(EndTimeUtc - StartTimeUtc).TotalMilliseconds;
 
+
+    public ApplicationLog ApplicationLog { get; protected set; }
     public Guid LogId { get; private set; }
     public string CorrelationId { get; private set; }
-    public ApplicationLog ApplicationLog { get; private set; } = null!;
 
     private HttpClientLog() { }
 
@@ -42,7 +43,6 @@ public class HttpClientLog : Entity
     {
         LogId = log.Id;
         CorrelationId = log.CorrelationId;
-        ApplicationLog = log;
     }
 
     public override string ToString()

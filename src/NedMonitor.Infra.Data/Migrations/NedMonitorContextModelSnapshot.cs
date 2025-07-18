@@ -31,7 +31,7 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<string>("CorrelationId")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
@@ -53,7 +53,7 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<string>("ORM")
                         .IsRequired()
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(60)");
 
                     b.Property<string>("Parameters")
                         .IsRequired()
@@ -62,7 +62,7 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<string>("Provider")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
@@ -90,7 +90,7 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<string>("CorrelationId")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
@@ -98,17 +98,16 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<DateTime>("EndTimeUtc")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EndpointPath")
-                        .IsRequired()
-                        .HasMaxLength(9000)
-                        .HasColumnType("varchar(150)");
-
                     b.Property<string>("ErrorCategory")
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("LogAttentionLevel")
                         .HasColumnType("int");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
@@ -121,13 +120,11 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<string>("TraceIdentifier")
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("varchar(200)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CorrelationId");
-
-                    b.HasIndex("EndpointPath");
 
                     b.HasIndex("ErrorCategory");
 
@@ -142,7 +139,8 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<string>("CorrelationId")
                         .IsRequired()
-                        .HasColumnType("varchar(150)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
@@ -162,7 +160,7 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<string>("Source")
                         .HasMaxLength(250)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<DateTime>("TimestampUtc")
                         .HasColumnType("datetime2");
@@ -173,7 +171,7 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
 
@@ -190,7 +188,8 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<string>("CorrelationId")
                         .IsRequired()
-                        .HasColumnType("varchar(150)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
@@ -203,7 +202,7 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<string>("ExceptionType")
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("InnerException")
                         .HasColumnType("varchar(max)");
@@ -214,7 +213,7 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<string>("Method")
                         .IsRequired()
                         .HasMaxLength(10)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("varchar(10)");
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
@@ -243,11 +242,11 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(2048)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(2048)");
 
                     b.Property<string>("UrlTemplate")
                         .HasMaxLength(2048)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(2048)");
 
                     b.HasKey("Id");
 
@@ -265,7 +264,7 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<string>("CorrelationId")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
@@ -273,7 +272,7 @@ namespace NedMonitor.Infra.Data.Migrations
                     b.Property<string>("LogCategory")
                         .IsRequired()
                         .HasMaxLength(4000)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(4000)");
 
                     b.Property<Guid>("LogId")
                         .HasColumnType("uniqueidentifier");
@@ -287,7 +286,7 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<string>("MemberName")
                         .HasMaxLength(450)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("MemberType")
                         .HasColumnType("varchar(150)");
@@ -316,7 +315,8 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<string>("CorrelationId")
                         .IsRequired()
-                        .HasColumnType("varchar(150)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("DateChanged")
                         .HasColumnType("datetime2");
@@ -326,7 +326,7 @@ namespace NedMonitor.Infra.Data.Migrations
 
                     b.Property<string>("Key")
                         .HasMaxLength(350)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("nvarchar(350)");
 
                     b.Property<Guid>("LogId")
                         .HasColumnType("uniqueidentifier");
@@ -398,17 +398,17 @@ namespace NedMonitor.Infra.Data.Migrations
                             b1.Property<string>("ApplicationVersion")
                                 .IsRequired()
                                 .HasMaxLength(100)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<string>("EnvironmentName")
                                 .IsRequired()
                                 .HasMaxLength(250)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(250)");
 
                             b1.Property<string>("MachineName")
                                 .IsRequired()
                                 .HasMaxLength(250)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(250)");
 
                             b1.Property<int>("ThreadId")
                                 .HasColumnType("int");
@@ -429,7 +429,6 @@ namespace NedMonitor.Infra.Data.Migrations
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<Guid>("Id")
-                                .HasMaxLength(200)
                                 .HasColumnType("uniqueidentifier");
 
                             b1.Property<int>("MinimumLogLevel")
@@ -438,7 +437,7 @@ namespace NedMonitor.Infra.Data.Migrations
                             b1.Property<string>("Name")
                                 .IsRequired()
                                 .HasMaxLength(200)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(200)");
 
                             b1.Property<int>("Type")
                                 .HasColumnType("int");
@@ -554,7 +553,7 @@ namespace NedMonitor.Infra.Data.Migrations
 
                                     b2.Property<string>("MaskValue")
                                         .IsRequired()
-                                        .HasColumnType("varchar(150)");
+                                        .HasColumnType("varchar(30)");
 
                                     b2.Property<string>("SensitiveKeys")
                                         .IsRequired()
@@ -592,16 +591,15 @@ namespace NedMonitor.Infra.Data.Migrations
                                 .HasColumnType("float");
 
                             b1.Property<string>("ClientId")
-                                .IsRequired()
                                 .HasMaxLength(250)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("nvarchar(250)");
 
                             b1.Property<long?>("ContentLength")
                                 .HasColumnType("bigint");
 
                             b1.Property<string>("ContentType")
                                 .HasMaxLength(100)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<string>("Headers")
                                 .IsRequired()
@@ -610,16 +608,16 @@ namespace NedMonitor.Infra.Data.Migrations
                             b1.Property<string>("HttpMethod")
                                 .IsRequired()
                                 .HasMaxLength(10)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(10)");
 
                             b1.Property<string>("Id")
                                 .IsRequired()
-                                .HasMaxLength(50)
-                                .HasColumnType("varchar(150)");
+                                .HasMaxLength(100)
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<string>("IpAddress")
                                 .HasMaxLength(45)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(45)");
 
                             b1.Property<bool>("IsAjaxRequest")
                                 .HasColumnType("bit");
@@ -630,17 +628,17 @@ namespace NedMonitor.Infra.Data.Migrations
                             b1.Property<string>("Protocol")
                                 .IsRequired()
                                 .HasMaxLength(10)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(10)");
 
                             b1.Property<string>("QueryString")
                                 .IsRequired()
                                 .HasMaxLength(1350)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("nvarchar(1350)");
 
                             b1.Property<string>("RequestUrl")
                                 .IsRequired()
                                 .HasMaxLength(1500)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("nvarchar(1500)");
 
                             b1.Property<string>("RouteValues")
                                 .IsRequired()
@@ -649,7 +647,7 @@ namespace NedMonitor.Infra.Data.Migrations
                             b1.Property<string>("Scheme")
                                 .IsRequired()
                                 .HasMaxLength(20)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(20)");
 
                             b1.HasKey("ApplicationLogId");
 
@@ -670,17 +668,17 @@ namespace NedMonitor.Infra.Data.Migrations
                                     b2.Property<string>("BrowserName")
                                         .IsRequired()
                                         .HasMaxLength(100)
-                                        .HasColumnType("varchar(150)");
+                                        .HasColumnType("varchar(100)");
 
                                     b2.Property<string>("BrowserVersion")
                                         .IsRequired()
                                         .HasMaxLength(50)
-                                        .HasColumnType("varchar(150)");
+                                        .HasColumnType("varchar(50)");
 
                                     b2.Property<string>("DeviceType")
                                         .IsRequired()
                                         .HasMaxLength(50)
-                                        .HasColumnType("varchar(150)");
+                                        .HasColumnType("varchar(50)");
 
                                     b2.Property<string>("OSName")
                                         .IsRequired()
@@ -690,12 +688,12 @@ namespace NedMonitor.Infra.Data.Migrations
                                     b2.Property<string>("OSVersion")
                                         .IsRequired()
                                         .HasMaxLength(50)
-                                        .HasColumnType("varchar(150)");
+                                        .HasColumnType("varchar(50)");
 
                                     b2.Property<string>("UserAgent")
                                         .IsRequired()
                                         .HasMaxLength(500)
-                                        .HasColumnType("varchar(150)");
+                                        .HasColumnType("varchar(500)");
 
                                     b2.HasKey("RequestApplicationLogId");
 
@@ -727,7 +725,7 @@ namespace NedMonitor.Infra.Data.Migrations
                             b1.Property<string>("ReasonPhrase")
                                 .IsRequired()
                                 .HasMaxLength(450)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(450)");
 
                             b1.Property<int>("StatusCode")
                                 .HasColumnType("int");
@@ -750,40 +748,39 @@ namespace NedMonitor.Infra.Data.Migrations
 
                             b1.Property<string>("AccountCode")
                                 .HasMaxLength(250)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(250)");
 
                             b1.Property<string>("AuthenticationType")
                                 .HasMaxLength(100)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("nvarchar(100)");
 
                             b1.Property<string>("Claims")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("Document")
                                 .HasMaxLength(80)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(80)");
 
                             b1.Property<string>("Email")
                                 .HasMaxLength(320)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(320)");
 
                             b1.Property<string>("Id")
-                                .HasMaxLength(250)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(100)");
 
                             b1.Property<bool>("IsAuthenticated")
                                 .HasColumnType("bit");
 
                             b1.Property<string>("Name")
                                 .HasMaxLength(450)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("nvarchar(450)");
 
                             b1.Property<string>("Roles")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.Property<string>("TenantId")
                                 .HasMaxLength(250)
-                                .HasColumnType("varchar(150)");
+                                .HasColumnType("varchar(250)");
 
                             b1.HasKey("ApplicationLogId");
 

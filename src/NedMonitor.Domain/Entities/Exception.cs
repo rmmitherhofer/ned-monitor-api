@@ -9,14 +9,14 @@ public class Exception : Entity
     public string Message { get; private set; }
     public string? Tracer { get; private set; }
     public string? InnerException { get; private set; }
-    public DateTime TimestampUtc { get; set; }
-    public string? Source { get; set; }
+    public DateTime TimestampUtc { get; private set; }
+    public string? Source { get; private set; }
 
     public ApplicationLog ApplicationLog { get; protected set; }
     public Guid LogId { get; private set; }
     public string CorrelationId { get; private set; }
 
-    private Exception() { }
+    protected Exception() { }
 
     public static ExceptionInfoBuilder Create(string type, string message, DateTime timestampUtc)
         => new(type, message, timestampUtc);
@@ -25,7 +25,6 @@ public class Exception : Entity
     {
         LogId = log.Id;
         CorrelationId = log.CorrelationId;
-        ApplicationLog = log;
     }
 
     public class ExceptionInfoBuilder

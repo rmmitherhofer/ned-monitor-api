@@ -25,6 +25,7 @@ public class NotificationMapping : IEntityTypeConfiguration<Notification>
             .IsRequired();
 
         builder.Property(x => x.Key)
+            .HasColumnType("nvarchar(350)")
             .HasMaxLength(350);
 
         builder.Property(x => x.Value)
@@ -37,9 +38,10 @@ public class NotificationMapping : IEntityTypeConfiguration<Notification>
         builder.Property(x => x.LogId)
             .IsRequired();
 
-        builder.HasOne(x => x.ApplicationLog)
-            .WithMany(x => x.Notifications)
-            .HasForeignKey(x => x.LogId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(x => x.CorrelationId)
+            .HasColumnType("nvarchar(100)")
+            .HasMaxLength(100)
+            .IsRequired();
+
     }
 }

@@ -165,14 +165,6 @@ public class AddLogCommand : Command
                     RuleFor(l => l.Request.Url)
                         .NotEmpty()
                         .WithMessage("Request.RequestUrl is required.");
-
-                    RuleFor(l => l.Request.UserAgent)
-                        .NotEmpty()
-                        .WithMessage("Request.UserAgent is required.");
-
-                    RuleFor(l => l.Request.ClientId)
-                        .NotEmpty()
-                        .WithMessage("Request.ClientId is required.");
                 });
 
             RuleFor(l => l.Response)

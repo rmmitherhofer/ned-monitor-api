@@ -13,9 +13,10 @@ public class DbQueryEntry : Entity
     public string? ExceptionMessage { get; private set; }
     public IDictionary<string, string>? DbContext { get; private set; }
     public string ORM { get; private set; }
+
+    public ApplicationLog ApplicationLog { get; protected set; }
     public Guid LogId { get; private set; }
     public string CorrelationId { get; private set; }
-    public ApplicationLog ApplicationLog { get; private set; } = null!;
 
     public static DbQueryEntryBuilder Create(string provider, DateTime executedAtUtc, double durationMs, bool success, string orm) =>
         new(provider, executedAtUtc, durationMs, success, orm);
@@ -24,7 +25,6 @@ public class DbQueryEntry : Entity
     {
         LogId = log.Id;
         CorrelationId = log.CorrelationId;
-        ApplicationLog = log;
     }
 
     public class DbQueryEntryBuilder

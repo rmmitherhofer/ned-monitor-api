@@ -50,12 +50,12 @@ public class RequestInfo
     /// <summary>
     /// The User-Agent header from the request.
     /// </summary>
-    public string UserAgent { get; set; }
+    public string? UserAgent { get; set; }
 
     /// <summary>
     /// The client identifier making the request.
     /// </summary>
-    public string ClientId { get; set; }
+    public string? ClientId { get; set; }
 
     /// <summary>
     /// The HTTP headers included in the request.

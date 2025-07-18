@@ -12,7 +12,7 @@ public class Request
     public bool IsHttps { get; private set; }
     public string QueryString { get; private set; }
     public IReadOnlyDictionary<string, string> RouteValues { get; private set; }
-     public string ClientId { get; private set; }
+     public string? ClientId { get; private set; }
     public IReadOnlyDictionary<string, List<string>> Headers { get; private set; }
     public string? ContentType { get; private set; }
     public long? ContentLength { get; private set; }
@@ -90,7 +90,7 @@ public class Request
             return this;
         }
 
-        public RequestInfoBuilder WithUserAgent(string userAgent)
+        public RequestInfoBuilder WithUserAgent(string? userAgent)
         {
             if (string.IsNullOrEmpty(userAgent)) return this;
 
@@ -99,7 +99,7 @@ public class Request
             return this;
         }
 
-        public RequestInfoBuilder WithClientId(string clientId)
+        public RequestInfoBuilder WithClientId(string? clientId)
         {
             _request.ClientId = clientId;
             return this;

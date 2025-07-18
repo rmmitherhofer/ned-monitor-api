@@ -13,10 +13,10 @@ public class Notification : Entity
     public string? Detail { get; private set; }
 
     public ApplicationLog ApplicationLog { get; protected set; }
-    public string CorrelationId { get; set; }
+    public string CorrelationId { get; private set; }
     public Guid LogId { get; private set; }
 
-    private Notification() { }
+    protected Notification() { }
 
     public static NotificationInfoBuilder Create(Guid id, DateTime timestamp, LogLevel logLevel, string value) => new(id, timestamp, logLevel, value);
 
@@ -24,7 +24,6 @@ public class Notification : Entity
     {
         LogId = log.Id;
         CorrelationId = log.CorrelationId;
-        ApplicationLog = log;
     }
 
     public class NotificationInfoBuilder
